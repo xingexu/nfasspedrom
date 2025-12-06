@@ -3,9 +3,10 @@ import Link from "next/link"
 import LogoScrollBar from "@/components/LogoScrollBar"
 import PostContent from "@/components/PostContent"
 
-export default async function SinglePost({ params }: { params: { id: string } }) {
+export default async function SinglePost({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const post = await prisma.post.findUnique({
-    where: { id: params.id }
+    where: { id }
   })
 
   if (!post) {

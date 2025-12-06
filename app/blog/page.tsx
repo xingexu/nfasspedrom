@@ -7,11 +7,12 @@ import { getAvailableYearsMonths, getYearMonthFromDate } from '@/lib/filters'
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: { year?: string; month?: string; search?: string }
+  searchParams: Promise<{ year?: string; month?: string; search?: string }>
 }) {
-  const year = searchParams.year ? parseInt(searchParams.year) : undefined
-  const month = searchParams.month ? parseInt(searchParams.month) : undefined
-  const search = searchParams.search
+  const resolvedSearchParams = await searchParams
+  const year = resolvedSearchParams.year ? parseInt(resolvedSearchParams.year) : undefined
+  const month = resolvedSearchParams.month ? parseInt(resolvedSearchParams.month) : undefined
+  const search = resolvedSearchParams.search
 
   const where: any = { published: true }
   
