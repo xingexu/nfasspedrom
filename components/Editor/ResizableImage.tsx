@@ -1,9 +1,8 @@
 import Image from '@tiptap/extension-image'
-import { ReactRenderer } from '@tiptap/react'
-import { NodeViewWrapper } from '@tiptap/react'
+import { ReactRenderer, NodeViewWrapper, NodeViewProps } from '@tiptap/react'
 import React, { useState, useEffect } from 'react'
 
-const ResizableImageComponent = ({ node, updateAttributes, selected, editor }: any) => {
+const ResizableImageComponent = ({ node, updateAttributes, selected, editor }: NodeViewProps) => {
   const [isResizing, setIsResizing] = useState(false)
   const [startX, setStartX] = useState(0)
   const [startWidth, setStartWidth] = useState(0)
@@ -105,4 +104,3 @@ export const ResizableImage = Image.extend({
     })
   },
 })
-
