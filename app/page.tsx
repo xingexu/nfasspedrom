@@ -2,44 +2,77 @@ import prisma from "@/lib/prisma"
 import Link from "next/link"
 import LogoScrollBar from "@/components/LogoScrollBar"
 import PostDeleteButton from "@/components/PostDeleteButton"
+import { getSession } from "@/lib/auth"
+import { LogoutButton } from "@/components/LogoutButton"
+import { redirect } from "next/navigation"
 
 export default async function Home() {
+  const session = await getSession()
+  const isLoggedIn = !!session
+
   const posts = await prisma.post.findMany({
     orderBy: { date: "desc" }
   })
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-white via-neutral-50/30 to-white">
       <LogoScrollBar />
       
-      <div className="max-w-4xl mx-auto px-6 md:px-8 py-16 md:py-24">
-        {/* Minimalistic header */}
-        <div className="mb-16 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-text mb-4 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-            Blog
-          </h1>
-          <div className="w-16 h-0.5 bg-primary mx-auto"></div>
+      <div className="max-w-4xl mx-auto px-6 md:px-8 py-12 md:py-16">
+        {/* Enhanced header */}
+        <div className="mb-12 text-center animate-fade-in">
+          <div className="inline-block mb-4">
+            <h1 className="text-5xl md:text-6xl font-bold text-text mb-3 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+              Blog
+            </h1>
+            <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"></div>
+          </div>
+          
+          {/* Login/Logout Button */}
+          <div className="flex justify-center">
+            {isLoggedIn ? (
+              <LogoutButton />
+            ) : (
+              <Link
+                href="/login"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105"
+              >
+                <svg
+                  className="w-4 h-4 transform group-hover:rotate-12 transition-transform"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                <span>Admin Login</span>
+              </Link>
+            )}
+          </div>
         </div>
 
-        {/* Posts List - Minimalistic Design */}
+        {/* Posts List - Enhanced Design */}
         {posts.length === 0 ? (
           <div className="relative">
             {/* Decorative background elements */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-96 h-96 rounded-full bg-primary/5 blur-3xl"></div>
+              <div className="w-72 h-72 rounded-full bg-gradient-to-r from-primary/5 via-primary/3 to-primary/5 blur-3xl animate-pulse"></div>
             </div>
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/3 blur-2xl"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-primary/3 blur-2xl"></div>
             
             {/* Content */}
-            <div className="relative text-center py-32">
+            <div className="relative text-center py-16 md:py-20 animate-fade-in">
               {/* Icon with decorative ring */}
-              <div className="relative inline-flex items-center justify-center mb-8">
-                <div className="absolute w-40 h-40 rounded-full border-2 border-primary/20 animate-pulse"></div>
-                <div className="absolute w-32 h-32 rounded-full border border-primary/30"></div>
-                <div className="relative inline-flex items-center justify-center w-24 h-24 bg-primary/5 rounded-full">
+              <div className="relative inline-flex items-center justify-center mb-6">
+                <div className="absolute w-32 h-32 rounded-full border-2 border-primary/10 animate-pulse"></div>
+                <div className="absolute w-24 h-24 rounded-full border border-primary/20"></div>
+                <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl backdrop-blur-sm">
                   <svg
-                    className="w-12 h-12 text-primary"
+                    className="w-10 h-10 text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -57,41 +90,55 @@ export default async function Home() {
               <h2 className="text-4xl md:text-5xl font-bold text-text mb-4" style={{ fontFamily: 'var(--font-heading)' }}>
                 No posts yet
               </h2>
-              <p className="text-text-muted text-lg mb-10 max-w-md mx-auto">
-                Create your first post to begin your blog.
-              </p>
               
-              {/* Enhanced Create Post Button */}
-              <Link
-                href="/posts/new"
-                className="relative inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-primary text-white font-medium hover:opacity-90 transition-all duration-300 hover:scale-105 shadow-xl hover:shadow-2xl hover:shadow-primary/40 overflow-hidden group/button"
-              >
-                {/* Animated background shine */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover/button:translate-x-[100%] transition-transform duration-1000"></div>
-                
-                {/* Glow effect */}
-                <div className="absolute inset-0 rounded-xl bg-primary blur-xl opacity-0 group-hover/button:opacity-50 transition-opacity duration-300 -z-10"></div>
-                
-                <svg
-                  className="w-6 h-6 relative z-10"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                <span className="relative z-10 text-lg">Create Post</span>
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <p className="text-text-muted text-lg mb-8 max-w-md mx-auto leading-relaxed">
+                    Create your first post to begin your blog.
+                  </p>
+                  
+                  {/* Create Post Button - Only for logged-in admins */}
+                  <Link
+                    href="/posts/new"
+                    className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-primary/90 text-white font-semibold text-base hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 hover:scale-105 overflow-hidden"
+                  >
+                    {/* Animated background shine */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                    
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 rounded-xl bg-primary blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-300 -z-10"></div>
+                    
+                    <svg
+                      className="w-5 h-5 relative z-10 transform group-hover:rotate-90 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    <span className="relative z-10">Create Post</span>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <p className="text-text-muted text-lg mb-3 max-w-md mx-auto leading-relaxed">
+                    This blog is currently empty. Log in as an admin to create posts.
+                  </p>
+                  <p className="text-text-muted/70 text-sm mb-0 max-w-md mx-auto">
+                    Visitors can read posts once they're published.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         ) : (
-          <div className="space-y-12">
-            {posts.map((post: any) => {
+          <div className="space-y-16">
+            {posts.map((post: any, index: number) => {
               const postDate = new Date(post.date)
               const formattedDate = postDate.toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -106,68 +153,79 @@ export default async function Home() {
               return (
                 <article 
                   key={post.id} 
-                  className="group"
+                  className="group animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  {/* Date */}
-                  <div className="mb-3">
-                    <time className="text-sm text-text-muted font-medium">
-                      {formattedDate}
-                    </time>
-                  </div>
-                  
-                  {/* Title */}
-                  <Link href={`/posts/${post.id}`}>
-                    <h2 className="text-3xl md:text-4xl font-bold text-text mb-4 group-hover:text-primary transition-colors leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-                      {post.title || 'Untitled Post'}
-                    </h2>
-                  </Link>
-                  
-                  {/* Preview Text */}
-                  {previewText && (
-                    <p className="text-text/60 leading-relaxed mb-6 text-base max-w-2xl" style={{ fontFamily: 'var(--font-body)' }}>
-                      {previewText}...
-                    </p>
-                  )}
-                  
-                  {/* Read More Link */}
-                  <div className="flex items-center justify-between">
-                    <Link
-                      href={`/posts/${post.id}`}
-                      className="inline-flex items-center gap-2 text-primary hover:opacity-70 transition-opacity font-medium text-sm group/link"
-                    >
-                      <span>Read more</span>
-                      <svg
-                        className="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </Link>
+                  <div className="relative">
+                    {/* Hover background effect */}
+                    <div className="absolute -inset-4 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
                     
-                    {/* Admin Actions */}
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link
-                        href={`/admin/posts/${post.id}/edit`}
-                        className="p-2 rounded-lg hover:bg-primary/5 transition-all"
-                        title="Edit"
-                      >
-                        <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
+                    <div className="relative">
+                      {/* Date */}
+                      <div className="mb-4">
+                        <time className="text-sm text-text-muted font-semibold tracking-wide uppercase">
+                          {formattedDate}
+                        </time>
+                      </div>
+                      
+                      {/* Title */}
+                      <Link href={`/posts/${post.id}`} className="block mb-5">
+                        <h2 className="text-4xl md:text-5xl font-bold text-text mb-4 group-hover:text-primary transition-all duration-300 leading-tight hover-lift" style={{ fontFamily: 'var(--font-heading)' }}>
+                          {post.title || 'Untitled Post'}
+                        </h2>
+                        <div className="w-0 h-0.5 bg-gradient-to-r from-primary to-transparent group-hover:w-24 transition-all duration-500"></div>
                       </Link>
-                      <PostDeleteButton postId={post.id} />
+                      
+                      {/* Preview Text */}
+                      {previewText && (
+                        <p className="text-text/70 leading-relaxed mb-8 text-lg max-w-3xl line-clamp-3" style={{ fontFamily: 'var(--font-body)' }}>
+                          {previewText}...
+                        </p>
+                      )}
+                      
+                      {/* Read More Link */}
+                      <div className="flex items-center justify-between">
+                        <Link
+                          href={`/posts/${post.id}`}
+                          className="group/link inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold text-base transition-all"
+                        >
+                          <span>Read more</span>
+                          <svg
+                            className="w-5 h-5 transform group-hover/link:translate-x-2 transition-transform duration-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2.5}
+                              d="M13 7l5 5m0 0l-5 5m5-5H6"
+                            />
+                          </svg>
+                        </Link>
+                        
+                        {/* Admin Actions - Only show if logged in */}
+                        {isLoggedIn && (
+                          <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <Link
+                              href={`/admin/posts/${post.id}/edit`}
+                              className="p-3 rounded-xl hover:bg-primary/10 transition-all group/edit"
+                              title="Edit"
+                            >
+                              <svg className="w-5 h-5 text-text-muted group-hover/edit:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </Link>
+                            <PostDeleteButton postId={post.id} />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   
                   {/* Divider */}
-                  <div className="mt-8 pt-8 border-t border-neutral-100"></div>
+                  <div className="mt-12 pt-8 border-t border-gradient-to-r from-transparent via-neutral-200 to-transparent"></div>
                 </article>
               )
             })}

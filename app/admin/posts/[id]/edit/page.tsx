@@ -14,7 +14,7 @@ export default async function EditPostPage({
   })
 
   if (!post) {
-    redirect('/admin/posts')
+    redirect('/')
   }
 
   return (

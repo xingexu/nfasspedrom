@@ -1,36 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createSession } from '@/lib/auth'
+
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'pedrombasidj'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'bigguy !RY7!@gak'
 
 export async function POST(request: NextRequest) {
-  const { username, password } = await request.json()
+  try {
+    const { username, password } = await request.json()
 
-  const adminUsername = process.env.ADMIN_USERNAME
-  const adminPassword = process.env.ADMIN_PASSWORD
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      await createSession(username)
+      return NextResponse.json({ ok: true })
+    }
 
-  if (!adminUsername || !adminPassword) {
-    return NextResponse.json(
-      { ok: false, error: 'Server auth not configured' },
-      { status: 500 }
-    )
-  }
-
-  const isValid = username === adminUsername && password === adminPassword
-
-  if (!isValid) {
     return NextResponse.json(
       { ok: false, error: 'Invalid username or password' },
       { status: 401 }
     )
+  } catch (error) {
+    return NextResponse.json(
+      { ok: false, error: 'Invalid request' },
+      { status: 400 }
+    )
   }
-
-  const res = NextResponse.json({ ok: true })
-
-  res.cookies.set('admin', 'true', {
-    httpOnly: true,
-    sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-  })
-
-  return res
 }
+
+
+

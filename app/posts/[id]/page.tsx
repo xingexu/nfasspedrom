@@ -28,16 +28,16 @@ export default async function SinglePost({ params }: { params: Promise<{ id: str
   })
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-white via-neutral-50/30 to-white">
       <LogoScrollBar />
-      <div className="max-w-4xl mx-auto px-6 md:px-8 py-16 md:py-24">
+      <div className="max-w-4xl mx-auto px-6 md:px-8 py-16 md:py-24 animate-fade-in">
         {/* Back link */}
         <Link 
           href="/"
-          className="inline-flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-8 text-sm font-medium"
+          className="group inline-flex items-center gap-2 text-text-muted hover:text-primary transition-all mb-10 text-sm font-semibold"
         >
           <svg
-            className="w-4 h-4 transform rotate-180"
+            className="w-5 h-5 transform -translate-x-1 group-hover:-translate-x-2 transition-transform"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -45,31 +45,31 @@ export default async function SinglePost({ params }: { params: Promise<{ id: str
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
+              strokeWidth={2.5}
+              d="M15 19l-7-7 7-7"
             />
           </svg>
           <span>Back to Blog</span>
         </Link>
 
         {/* Post Header */}
-        <div className="mb-8">
-          <time className="text-sm text-text-muted font-medium block mb-4">
+        <div className="mb-12">
+          <time className="text-sm text-text-muted font-semibold tracking-wide uppercase block mb-6">
             {formattedDate}
           </time>
-          <h1 className="text-4xl md:text-5xl font-bold text-text mb-6 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h1 className="text-5xl md:text-6xl font-bold text-text mb-8 leading-tight tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
             {post.title || 'Untitled Post'}
           </h1>
-          <div className="w-16 h-0.5 bg-primary"></div>
+          <div className="w-24 h-1 bg-gradient-to-r from-primary via-primary/80 to-transparent rounded-full"></div>
         </div>
 
         {/* Post Content */}
-        <div 
-          className="max-w-none text-text leading-relaxed"
+        <article 
+          className="max-w-none text-text leading-relaxed prose prose-lg prose-neutral"
           style={{ fontFamily: 'var(--font-body)' }}
         >
           <PostContent content={post.content} maxLength={999999} />
-        </div>
+        </article>
       </div>
     </div>
   )

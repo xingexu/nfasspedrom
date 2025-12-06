@@ -24,7 +24,7 @@ export default function LoginPage() {
       })
 
       if (res.ok) {
-        router.push('/admin/posts')
+        router.push('/')
         router.refresh()
       } else {
         setError('Invalid credentials')

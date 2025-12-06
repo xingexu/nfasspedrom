@@ -102,3 +102,5 @@ export const ResizableImage = Image.extend({
     return ReactNodeViewRenderer(ResizableImageComponent)
   },
 })
+
+
