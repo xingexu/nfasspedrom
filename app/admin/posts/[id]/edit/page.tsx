@@ -30,7 +30,14 @@ export default async function EditPostPage({
       
       <div className="flex-1">
         <div className="max-w-4xl mx-auto px-6 md:px-8 py-16 md:py-24">
-          <PostEditor post={post} />
+          <PostEditor
+            post={{
+              ...post,
+              postDate: post.postDate
+                ? post.postDate.toISOString().split('T')[0]
+                : null,
+            }}
+          />
         </div>
       </div>
     </div>
