@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation'
 import TipTapEditor from './Editor/TipTapEditor'
 
 interface Post {
-  id: number
+  id: string
   title: string
-  excerpt: string
+  excerpt: string | null
   content: string
   postDate: string | null
   coverImageUrl: string | null

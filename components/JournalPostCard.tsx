@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
 interface JournalPostCardProps {
-  id: number
-  slug: string
+  id: string
+  slug: string | null
   title: string
-  excerpt: string
+  excerpt: string | null
   content: string
   createdAt: Date
 }
