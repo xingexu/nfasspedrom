@@ -1,6 +1,7 @@
-import Image from '@tiptap/extension-image'
-import { ReactRenderer, NodeViewWrapper, NodeViewProps } from '@tiptap/react'
 import React, { useState, useEffect } from 'react'
+import Image from '@tiptap/extension-image'
+import { ReactRenderer, NodeViewWrapper } from '@tiptap/react'
+import type { NodeViewProps } from '@tiptap/react'
 
 const ResizableImageComponent = ({ node, updateAttributes, selected, editor }: NodeViewProps) => {
   const [isResizing, setIsResizing] = useState(false)
