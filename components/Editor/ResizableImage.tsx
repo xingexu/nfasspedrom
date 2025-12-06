@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Image from '@tiptap/extension-image'
-import { ReactRenderer, NodeViewWrapper } from '@tiptap/react'
+import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import type { NodeViewProps } from '@tiptap/react'
 
 const ResizableImageComponent = ({ node, updateAttributes, selected, editor }: NodeViewProps) => {
@@ -99,9 +99,6 @@ export const ResizableImage = Image.extend({
   },
 
   addNodeView() {
-    return ReactRenderer({
-      component: ResizableImageComponent,
-      contentDOMElementTag: 'div',
-    })
+    return ReactNodeViewRenderer(ResizableImageComponent)
   },
 })

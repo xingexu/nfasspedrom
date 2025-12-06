@@ -40,13 +40,17 @@ const Color = Extension.create({
   },
   addCommands() {
     return {
-      setColor: (color: string) => ({ chain }) => {
-        return chain().setMark('textStyle', { color }).run()
-      },
-      unsetColor: () => ({ chain }) => {
-        return chain().setMark('textStyle', { color: null }).removeEmptyTextStyle().run()
-      },
-    }
+      setColor:
+        (color: string) =>
+        ({ chain }: any) => {
+          return chain().setMark('textStyle', { color }).run()
+        },
+      unsetColor:
+        () =>
+        ({ chain }: any) => {
+          return chain().setMark('textStyle', { color: null }).removeEmptyTextStyle().run()
+        },
+    } as any
   },
 })
 import { FontSize } from './FontSize'
@@ -126,7 +130,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
               const src = e.target?.result as string
               if (src && editor) {
                 try {
-                  editor.chain().focus().setVideo({ src }).run()
+                  ;(editor.chain().focus() as any).setVideo({ src }).run()
                 } catch (error) {
                   console.error('Error inserting video:', error)
                 }
@@ -173,7 +177,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
                 const src = e.target?.result as string
                 if (src && editor) {
                   try {
-                    editor.chain().focus().setVideo({ src }).run()
+                    ;(editor.chain().focus() as any).setVideo({ src }).run()
                   } catch (error) {
                     console.error('Error pasting video:', error)
                   }
@@ -276,7 +280,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
               value={fontSize}
               onChange={(e) => {
                 setFontSize(e.target.value)
-                editor.chain().focus().setFontSize(`${e.target.value}pt`).run()
+                ;(editor.chain().focus() as any).setFontSize(`${e.target.value}pt`).run()
               }}
               className="px-1.5 py-1 text-xs border border-neutral-200 rounded bg-white focus:outline-none focus:border-primary"
             >
@@ -298,7 +302,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
               value={fontColor}
               onChange={(e) => {
                 setFontColor(e.target.value)
-                editor.chain().focus().setColor(e.target.value).run()
+                ;(editor.chain().focus() as any).setColor(e.target.value).run()
               }}
               className="w-7 h-7 border border-neutral-200 rounded cursor-pointer"
               title="Text Color"
@@ -307,7 +311,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
               value={fontColor}
               onChange={(e) => {
                 setFontColor(e.target.value)
-                editor.chain().focus().setColor(e.target.value).run()
+                ;(editor.chain().focus() as any).setColor(e.target.value).run()
               }}
               className="px-1.5 py-1 text-xs border border-neutral-200 rounded bg-white focus:outline-none focus:border-primary"
             >
@@ -362,7 +366,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
                     if (file.type.startsWith('image/')) {
                       editor.chain().focus().setImage({ src }).run()
                     } else if (file.type.startsWith('video/')) {
-                      editor.chain().focus().setVideo({ src }).run()
+                      ;(editor.chain().focus() as any).setVideo({ src }).run()
                     }
                   } catch (error) {
                     console.error('Error inserting media:', error)
@@ -425,7 +429,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
               editor.chain().focus().toggleHeading({ level: 1 }).run()
               // Apply red color to heading
               setTimeout(() => {
-                editor.chain().focus().setColor('#FF003D').run()
+                ;(editor.chain().focus() as any).setColor('#FF003D').run()
               }, 10)
             }}
             className={`px-2 py-1.5 rounded hover:bg-neutral-200 font-bold text-xs whitespace-nowrap ${
@@ -440,7 +444,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
             onClick={() => {
               editor.chain().focus().toggleHeading({ level: 2 }).run()
               setTimeout(() => {
-                editor.chain().focus().setColor('#FF003D').run()
+                ;(editor.chain().focus() as any).setColor('#FF003D').run()
               }, 10)
             }}
             className={`px-2 py-1.5 rounded hover:bg-neutral-200 font-bold text-xs whitespace-nowrap ${
