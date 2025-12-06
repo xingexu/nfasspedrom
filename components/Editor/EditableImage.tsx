@@ -85,7 +85,7 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
     if (handle) {
       const handleType = (handle as HTMLElement).dataset.resizeHandle
       setIsResizing(true)
-      setResizeHandle(handleType)
+      setResizeHandle(handleType ?? null)
       const currentWidth = typeof imageSize.width === 'number' ? imageSize.width : (imageRef.current?.offsetWidth || 500)
       const currentHeight = typeof imageSize.height === 'number' ? imageSize.height : (imageRef.current?.offsetHeight || 500)
       setResizeStart({
@@ -519,3 +519,4 @@ export const EditableImage = Image.extend({
     })
   },
 })
+
