@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id            String   @id @default(cuid())
+  title         String
+  content       String   @db.Text
+  excerpt       String?  @db.Text
+  slug          String?  @unique
+  date          DateTime @default(now())
+  postDate      DateTime? @map("post_date")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  published     Boolean  @default(true)
+  coverImageUrl String?  @map("cover_image_url")
+
+  @@map("Post")
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("Image")
+}
