@@ -1,18 +1,26 @@
-import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth'
+import { AdminLogoutButton } from '@/components/AdminLogoutButton'
+import LogoScrollBar from '@/components/LogoScrollBar'
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const session = await getSession()
-  
-  // Allow access to login page without auth
-  if (!session) {
-    return <>{children}</>
-  }
-
-  return <>{children}</>
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      <LogoScrollBar />
+      <div className="border-b border-neutral-100">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-heading)' }}>
+            Admin Panel
+          </h1>
+          <AdminLogoutButton />
+        </div>
+      </div>
+      <div className="flex-1">
+        {children}
+      </div>
+    </div>
+  )
 }
 

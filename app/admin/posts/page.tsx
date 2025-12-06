@@ -1,24 +1,14 @@
-import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import LogoScrollBar from '@/components/LogoScrollBar'
 
 export default async function AdminPostsPage() {
-  const session = await getSession()
-  
-  if (!session) {
-    redirect('/admin/login')
-  }
 
   const posts = await prisma.post.findMany({
     orderBy: { createdAt: 'desc' },
   })
 
   return (
-    <div className="min-h-screen bg-background">
-      <LogoScrollBar />
-      <div className="max-w-4xl mx-auto px-6 py-12">
+    <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold text-text">Posts</h2>
           <Link
@@ -64,7 +54,6 @@ export default async function AdminPostsPage() {
             ))
           )}
         </div>
-      </div>
     </div>
   )
 }
