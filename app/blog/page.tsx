@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import JournalPostCard from '@/components/JournalPostCard'
 import BlogSidebar from '@/components/BlogSidebar'
 import LogoScrollBar from '@/components/LogoScrollBar'
-import { getAvailableYearsMonths } from '@/lib/filters'
+import { getAvailableYearsMonths, getYearMonthFromDate } from '@/lib/filters'
 
 export default async function BlogPage({
   searchParams,
@@ -14,8 +14,17 @@ export default async function BlogPage({
   const search = searchParams.search
 
   const where: any = { published: true }
-  if (year) where.year = year
-  if (month) where.month = month
+  
+  // Filter by year and month using date fields
+  if (year || month) {
+    const startDate = new Date(year || 2000, (month || 1) - 1, 1)
+    const endDate = new Date(year || 2099, month || 12, 0, 23, 59, 59, 999)
+    where.createdAt = {
+      gte: startDate,
+      lte: endDate,
+    }
+  }
+  
   if (search) {
     where.OR = [
       { title: { contains: search } },
@@ -29,12 +38,19 @@ export default async function BlogPage({
     orderBy: { createdAt: 'desc' },
   })
 
+  // Get all published posts to compute available years/months
   const allPosts = await prisma.post.findMany({
     where: { published: true },
-    select: { year: true, month: true },
+    select: { createdAt: true },
   })
 
-  const availableYearsMonths = getAvailableYearsMonths(allPosts)
+  // Transform posts to include year/month for filtering
+  const postsWithYearMonth = allPosts.map((post) => {
+    const { year, month } = getYearMonthFromDate(post.createdAt)
+    return { year, month }
+  })
+
+  const availableYearsMonths = getAvailableYearsMonths(postsWithYearMonth)
 
   return (
     <div className="w-full relative min-h-screen flex flex-col">
