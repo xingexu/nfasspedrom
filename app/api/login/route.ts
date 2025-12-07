@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSession } from '@/lib/auth'
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'bigguy'
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'RY7!@gak'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '!RY7!@gak'
 
 export async function POST(request: NextRequest) {
   try {
