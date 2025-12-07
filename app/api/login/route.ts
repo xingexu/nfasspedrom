@@ -7,22 +7,26 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '!RY7!@gak'
 export async function POST(request: NextRequest) {
   try {
     const { username, password } = await request.json()
+    
+    // Trim whitespace from inputs
+    const trimmedUsername = username?.trim() || ''
+    const trimmedPassword = password?.trim() || ''
 
     // Debug logging (remove after fixing)
     console.log('Login attempt:', {
-      providedUsername: username,
-      providedPasswordLength: password?.length,
-      providedPasswordChars: password ? password.split('').map(c => c.charCodeAt(0)) : null,
+      providedUsername: trimmedUsername,
+      providedPasswordLength: trimmedPassword?.length,
+      providedPasswordChars: trimmedPassword ? trimmedPassword.split('').map((c: string) => c.charCodeAt(0)) : null,
       expectedUsername: ADMIN_USERNAME,
       expectedPasswordLength: ADMIN_PASSWORD?.length,
-      expectedPasswordChars: ADMIN_PASSWORD ? ADMIN_PASSWORD.split('').map(c => c.charCodeAt(0)) : null,
-      usernameMatch: username === ADMIN_USERNAME,
-      passwordMatch: password === ADMIN_PASSWORD,
+      expectedPasswordChars: ADMIN_PASSWORD ? ADMIN_PASSWORD.split('').map((c: string) => c.charCodeAt(0)) : null,
+      usernameMatch: trimmedUsername === ADMIN_USERNAME,
+      passwordMatch: trimmedPassword === ADMIN_PASSWORD,
       envUsernameSet: !!process.env.ADMIN_USERNAME,
       envPasswordSet: !!process.env.ADMIN_PASSWORD,
     })
 
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    if (trimmedUsername === ADMIN_USERNAME && trimmedPassword === ADMIN_PASSWORD) {
       await createSession(username)
       return NextResponse.json({ ok: true })
     }

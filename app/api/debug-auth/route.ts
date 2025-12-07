@@ -10,8 +10,8 @@ export async function GET() {
     envPasswordSet: !!process.env.ADMIN_PASSWORD,
     usernameLength: username.length,
     passwordLength: password.length,
-    usernameChars: username.split('').map(c => c.charCodeAt(0)),
-    passwordChars: password.split('').map(c => c.charCodeAt(0)),
+    usernameChars: username.split('').map((c: string) => c.charCodeAt(0)),
+    passwordChars: password.split('').map((c: string) => c.charCodeAt(0)),
     usernameValue: username,
     // Don't expose actual password, just first char for verification
     passwordFirstChar: password[0],
