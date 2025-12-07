@@ -11,11 +11,15 @@ export async function POST(request: NextRequest) {
     // Debug logging (remove after fixing)
     console.log('Login attempt:', {
       providedUsername: username,
-      providedPassword: password?.replace(/./g, '*'),
+      providedPasswordLength: password?.length,
+      providedPasswordChars: password?.split('').map(c => c.charCodeAt(0)),
       expectedUsername: ADMIN_USERNAME,
-      expectedPassword: ADMIN_PASSWORD?.replace(/./g, '*'),
+      expectedPasswordLength: ADMIN_PASSWORD?.length,
+      expectedPasswordChars: ADMIN_PASSWORD?.split('').map(c => c.charCodeAt(0)),
       usernameMatch: username === ADMIN_USERNAME,
       passwordMatch: password === ADMIN_PASSWORD,
+      envUsernameSet: !!process.env.ADMIN_USERNAME,
+      envPasswordSet: !!process.env.ADMIN_PASSWORD,
     })
 
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
