@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSession } from '@/lib/auth'
 
-const ADMIN_USERNAME = 'pedrombasidj'
-const ADMIN_PASSWORD = 'bigguy !RY7!@gak'
+const ADMIN_USERNAME = 'bigguy'
+const ADMIN_PASSWORD = 'RY7!@gak'
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
 
 
 
