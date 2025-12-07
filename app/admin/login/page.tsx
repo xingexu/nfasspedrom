@@ -28,7 +28,8 @@ export default function LoginPage() {
         router.push('/')
         router.refresh()
       } else {
-        setError('Invalid credentials')
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || 'Invalid username or password')
       }
     } catch (err) {
       setError('An error occurred')
