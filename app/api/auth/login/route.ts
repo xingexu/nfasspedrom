@@ -8,6 +8,20 @@ export async function POST(request: NextRequest) {
   try {
     const { username, password } = await request.json()
 
+    // Debug logging (remove after fixing)
+    console.log('Login attempt (auth/login):', {
+      providedUsername: username,
+      providedPasswordLength: password?.length,
+      providedPasswordChars: password?.split('').map(c => c.charCodeAt(0)),
+      expectedUsername: ADMIN_USERNAME,
+      expectedPasswordLength: ADMIN_PASSWORD?.length,
+      expectedPasswordChars: ADMIN_PASSWORD?.split('').map(c => c.charCodeAt(0)),
+      usernameMatch: username === ADMIN_USERNAME,
+      passwordMatch: password === ADMIN_PASSWORD,
+      envUsernameSet: !!process.env.ADMIN_USERNAME,
+      envPasswordSet: !!process.env.ADMIN_PASSWORD,
+    })
+
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       await createSession(username)
       return NextResponse.json({ success: true })
