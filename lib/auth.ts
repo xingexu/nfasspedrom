@@ -35,9 +35,13 @@ export async function createSession(username: string) {
   const session = await encrypt({ username })
 
   const cookieStore = await cookies()
+  // Use secure cookies in production (Vercel uses HTTPS)
+  // Check for Vercel environment or production
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1'
+  
   cookieStore.set('session', session, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProduction,
     expires,
     sameSite: 'lax',
     path: '/',

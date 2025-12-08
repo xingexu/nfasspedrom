@@ -12,19 +12,19 @@ export async function POST(request: NextRequest) {
     const trimmedUsername = username?.trim() || ''
     const trimmedPassword = password?.trim() || ''
 
-    // Debug logging (remove after fixing)
-    console.log('Login attempt (auth/login):', {
-      providedUsername: trimmedUsername,
-      providedPasswordLength: trimmedPassword?.length,
-      providedPasswordChars: trimmedPassword ? trimmedPassword.split('').map((c: string) => c.charCodeAt(0)) : null,
-      expectedUsername: ADMIN_USERNAME,
-      expectedPasswordLength: ADMIN_PASSWORD?.length,
-      expectedPasswordChars: ADMIN_PASSWORD ? ADMIN_PASSWORD.split('').map((c: string) => c.charCodeAt(0)) : null,
-      usernameMatch: trimmedUsername === ADMIN_USERNAME,
-      passwordMatch: trimmedPassword === ADMIN_PASSWORD,
-      envUsernameSet: !!process.env.ADMIN_USERNAME,
-      envPasswordSet: !!process.env.ADMIN_PASSWORD,
-    })
+    // Debug logging for production troubleshooting
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Login attempt (auth/login):', {
+        providedUsername: trimmedUsername,
+        providedPasswordLength: trimmedPassword?.length,
+        expectedUsername: ADMIN_USERNAME,
+        expectedPasswordLength: ADMIN_PASSWORD?.length,
+        usernameMatch: trimmedUsername === ADMIN_USERNAME,
+        passwordMatch: trimmedPassword === ADMIN_PASSWORD,
+        envUsernameSet: !!process.env.ADMIN_USERNAME,
+        envPasswordSet: !!process.env.ADMIN_PASSWORD,
+      })
+    }
 
     if (trimmedUsername === ADMIN_USERNAME && trimmedPassword === ADMIN_PASSWORD) {
       await createSession(username)
