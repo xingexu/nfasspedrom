@@ -31,3 +31,12 @@ model Image {
 
   @@map("Image")
 }
+
+model About {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("About")
+}
