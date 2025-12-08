@@ -17,6 +17,30 @@ export async function GET(
   return NextResponse.json(post)
 }
 
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await context.params
+    const { title, content, date } = await request.json()
+
+    const updatedPost = await prisma.post.update({
+      where: { id },
+      data: {
+        title,
+        content,
+        date: new Date(date)
+      }
+    })
+
+    return NextResponse.json(updatedPost)
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: "Failed to update post" }, { status: 500 })
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }

@@ -23,8 +23,8 @@ export default async function SinglePost({ params }: { params: Promise<{ id: str
   const postDate = new Date(post.date)
   const formattedDate = postDate.toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+    month: '2-digit',
+    day: '2-digit'
   })
 
   return (

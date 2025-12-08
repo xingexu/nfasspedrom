@@ -10,8 +10,10 @@ A production-quality personal blog for Pedrom Basidj built with Next.js 14, Type
    ```
 
 2. **Set up the database:**
+   - Create a `.env` file with your `DATABASE_URL` (see Environment Variables below)
+   - Run migrations:
    ```bash
-   npx prisma db push
+   npm run db:migrate
    ```
 
 3. **Add the logo:**
@@ -44,7 +46,7 @@ A production-quality personal blog for Pedrom Basidj built with Next.js 14, Type
 - Next.js 14 (App Router)
 - TypeScript
 - Tailwind CSS
-- Prisma ORM with PostgreSQL (production) / SQLite (development)
+- Prisma ORM with PostgreSQL
 - TipTap Rich Text Editor
 - JWT Authentication (jose)
 - Lowlight for syntax highlighting
@@ -83,19 +85,22 @@ api/
 
 ## Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory (see `env.example` for template):
 
-**For Local Development (SQLite):**
 ```
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="postgresql://user:password@host:port/database?sslmode=require"
 JWT_SECRET="your-secret-key-change-in-production"
+ADMIN_USERNAME="pedrombasidj"  # Optional, has default
+ADMIN_PASSWORD="bigguy !RY7!@gak"  # Optional, has default
 ```
 
-**For Production (PostgreSQL):**
-```
-DATABASE_URL="postgresql://user:password@host:port/database"
-JWT_SECRET="your-secret-key-change-in-production"
-```
+**Getting a Database URL:**
+- **Vercel Postgres**: Project → Storage → Create Database → Postgres (easiest)
+- **Supabase**: https://supabase.com (free tier)
+- **Neon**: https://neon.tech (free tier)
+- **Railway**: https://railway.app (free tier)
+
+See `DATABASE_SETUP.md` for detailed instructions.
 
 ## Vercel Deployment
 
@@ -118,17 +123,8 @@ This project is configured for deployment on Vercel:
 
 4. **Deploy**
    - Push to your main branch or use Vercel's deploy button
-   - Vercel will automatically run `prisma generate` and `next build`
-   - After deployment, run `npx prisma db push` via Vercel CLI or connect to your database directly to set up the schema
-
-5. **Run database migrations**
-   ```bash
-   npx prisma db push
-   ```
-   Or use Prisma migrations:
-   ```bash
-   npx prisma migrate deploy
-   ```
+   - The build script automatically runs `prisma generate` and `prisma migrate deploy`
+   - Your database will be set up automatically on first deployment
 
 ## Notes
 

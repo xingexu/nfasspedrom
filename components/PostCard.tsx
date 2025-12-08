@@ -19,8 +19,8 @@ export default function PostCard({
   const date = new Date(createdAt)
   const formattedDate = date.toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
   })
 
   return (
@@ -48,6 +48,8 @@ export default function PostCard({
     </Link>
   )
 }
+
+
 
 
 

@@ -142,8 +142,8 @@ export default async function Home() {
               const postDate = new Date(post.date)
               const formattedDate = postDate.toLocaleDateString('en-US', {
                 year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+                month: '2-digit',
+                day: '2-digit'
               })
               
               // Extract text content from HTML
