@@ -53,7 +53,7 @@ export default function BlogSidebar({
 
   return (
     <div className="w-64 flex-shrink-0 pr-8">
-      <h1 className="text-3xl font-bold text-text mb-6">Blog</h1>
+      <h1 className="text-3xl font-bold text-text mb-6">Journal</h1>
       
       <Link
         href="/posts/new"

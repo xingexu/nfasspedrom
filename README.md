@@ -1,6 +1,6 @@
-# n/fäss - Personal Blog
+# n/fäss - Personal Journal
 
-A production-quality personal blog for Pedrom Basidj built with Next.js 14, TypeScript, Tailwind CSS, Prisma, and TipTap.
+A production-quality personal journal for Pedrom Basidj built with Next.js 14, TypeScript, Tailwind CSS, Prisma, and TipTap.
 
 ## Setup Instructions
 
@@ -36,7 +36,7 @@ A production-quality personal blog for Pedrom Basidj built with Next.js 14, Type
 
 - **Rich Text Editor**: TipTap editor with syntax highlighting, images, links, and more
 - **Image Uploads**: Drag and drop or paste images directly into posts
-- **Admin Panel**: Full CRUD operations for blog posts
+- **Admin Panel**: Full CRUD operations for journal posts
 - **Filtering**: Filter posts by year and month
 - **Responsive Design**: Modern, clean UI with Tailwind CSS
 - **Authentication**: JWT-based authentication with httpOnly cookies
@@ -57,7 +57,7 @@ A production-quality personal blog for Pedrom Basidj built with Next.js 14, Type
 app/
   ├── layout.tsx          # Root layout with fonts
   ├── page.tsx            # Home page with post list
-  ├── blog/[slug]/        # Individual blog post pages
+  ├── blog/[slug]/        # Individual journal post pages
   ├── journal/            # Journal page (redirects to home)
   └── admin/              # Admin panel
       ├── login/          # Login page

@@ -23,7 +23,7 @@ export default async function Home() {
         <div className="mb-12 text-center animate-fade-in">
           <div className="inline-block mb-4">
             <h1 className="text-5xl md:text-6xl font-bold text-text mb-3 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-              Blog
+              Journal
             </h1>
             <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"></div>
           </div>
@@ -94,7 +94,7 @@ export default async function Home() {
               {isLoggedIn ? (
                 <>
                   <p className="text-text-muted text-lg mb-8 max-w-md mx-auto leading-relaxed">
-                    Create your first post to begin your blog.
+                    Create your first post to begin your journal.
                   </p>
                   
                   {/* Create Post Button - Only for logged-in admins */}
@@ -127,7 +127,7 @@ export default async function Home() {
               ) : (
                 <>
                   <p className="text-text-muted text-lg mb-3 max-w-md mx-auto leading-relaxed">
-                    This blog is currently empty. Log in as an admin to create posts.
+                    This journal is currently empty. Log in as an admin to create posts.
                   </p>
                   <p className="text-text-muted/70 text-sm mb-0 max-w-md mx-auto">
                     Visitors can read posts once they're published.

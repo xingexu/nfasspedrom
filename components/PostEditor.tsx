@@ -86,7 +86,7 @@ export default function PostEditor({ post }: PostEditorProps) {
             d="M9 5l7 7-7 7"
           />
         </svg>
-        <span>Back to Blog</span>
+        <span>Back to Journal</span>
       </button>
 
       {/* Header */}

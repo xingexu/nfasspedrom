@@ -19,7 +19,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'n/fäss',
-  description: 'Personal blog by Pedrom Basidj',
+  description: 'Personal journal by Pedrom Basidj',
   icons: {
     icon: '/nfass-logo.JPG',
     apple: '/nfass-logo.JPG',

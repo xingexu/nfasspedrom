@@ -24,7 +24,7 @@ export default function PostsEmpty() {
         No posts yet
       </h2>
       <p className="text-text-muted text-lg mb-8 max-w-md mx-auto">
-        Create your first post to begin your blog.
+        Create your first post to begin your journal.
       </p>
       <Link
         href="/posts/new"

@@ -49,7 +49,7 @@ export default async function SinglePost({ params }: { params: Promise<{ id: str
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span>Back to Blog</span>
+          <span>Back to Journal</span>
         </Link>
 
         {/* Post Header */}
