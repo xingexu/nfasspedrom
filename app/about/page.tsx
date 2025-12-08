@@ -21,7 +21,7 @@ export default async function AboutPage() {
         <div className="mb-12 text-center animate-fade-in">
           <div className="inline-block mb-4">
             <h1 className="text-5xl md:text-6xl font-bold text-text mb-3 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-              About Me
+              About Pedrom
             </h1>
             <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"></div>
           </div>
@@ -57,7 +57,7 @@ export default async function AboutPage() {
             </h2>
             {isLoggedIn ? (
               <p className="text-text-muted text-lg mb-8 max-w-md mx-auto">
-                Log in as an admin to add your about me content.
+                Log in as an admin to add your about content.
               </p>
             ) : (
               <p className="text-text-muted text-lg mb-8 max-w-md mx-auto">
@@ -87,7 +87,7 @@ export default async function AboutPage() {
                   d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                 />
               </svg>
-              <span>Edit About Me</span>
+              <span>Edit About Pedrom</span>
             </Link>
           </div>
         )}

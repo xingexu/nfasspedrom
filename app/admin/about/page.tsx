@@ -92,7 +92,7 @@ export default function AboutEditorPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-text mb-4 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-            Edit About Me
+            Edit About Pedrom
           </h1>
           <div className="w-16 h-0.5 bg-primary"></div>
         </div>
@@ -101,7 +101,7 @@ export default function AboutEditorPage() {
           {/* Content editor */}
           <div>
             <label className="block text-sm font-medium text-text-muted mb-2">
-              About Me Content
+              About Pedrom Content
             </label>
             <div className="border border-neutral-200 rounded-lg p-4 bg-white focus-within:border-primary transition-all min-h-[400px]">
               <TipTapEditor content={content} onChange={setContent} />
@@ -135,7 +135,7 @@ export default function AboutEditorPage() {
               disabled={saving}
               className="px-8 py-2.5 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {saving ? 'Saving...' : 'Save About Me'}
+              {saving ? 'Saving...' : 'Save About Pedrom'}
             </button>
           </div>
         </form>

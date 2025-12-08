@@ -28,14 +28,8 @@ export default async function Home() {
             <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"></div>
           </div>
           
-          {/* Login/Logout Button and Navigation */}
-          <div className="flex justify-center items-center gap-4">
-            <Link
-              href="/about"
-              className="text-text-muted hover:text-primary transition-colors text-sm font-medium"
-            >
-              About
-            </Link>
+          {/* Login/Logout Button */}
+          <div className="flex justify-center">
             {isLoggedIn ? (
               <LogoutButton />
             ) : (
