@@ -34,16 +34,23 @@ export default async function BlogPage({
     ]
   }
 
-  const posts = await prisma.post.findMany({
-    where,
-    orderBy: { createdAt: 'desc' },
-  })
+  let posts = []
+  let allPosts = []
+  try {
+    posts = await prisma.post.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    })
 
-  // Get all published posts to compute available years/months
-  const allPosts = await prisma.post.findMany({
-    where: { published: true },
-    select: { createdAt: true },
-  })
+    // Get all published posts to compute available years/months
+    allPosts = await prisma.post.findMany({
+      where: { published: true },
+      select: { createdAt: true },
+    })
+  } catch (error: any) {
+    console.error('Error fetching posts:', error?.message || error)
+    // Continue with empty arrays if database query fails
+  }
 
   // Transform posts to include year/month for filtering
   const postsWithYearMonth = allPosts.map((post) => {

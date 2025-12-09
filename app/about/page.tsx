@@ -8,9 +8,15 @@ export default async function AboutPage() {
   const session = await getSession()
   const isLoggedIn = !!session
 
-  const about = await prisma.about.findFirst({
-    orderBy: { updatedAt: 'desc' },
-  })
+  let about = null
+  try {
+    about = await prisma.about.findFirst({
+      orderBy: { updatedAt: 'desc' },
+    })
+  } catch (error: any) {
+    console.error('Error fetching about:', error?.message || error)
+    // Continue with null if database query fails
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-neutral-50/30 to-white">

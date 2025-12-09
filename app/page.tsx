@@ -10,9 +10,16 @@ export default async function Home() {
   const session = await getSession()
   const isLoggedIn = !!session
 
-  const posts = await prisma.post.findMany({
-    orderBy: { date: "desc" }
-  })
+  let posts = []
+  try {
+    posts = await prisma.post.findMany({
+      orderBy: { date: "desc" }
+    })
+  } catch (error: any) {
+    console.error('Error fetching posts:', error?.message || error)
+    // Continue with empty posts array if database query fails
+    posts = []
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-neutral-50/30 to-white">

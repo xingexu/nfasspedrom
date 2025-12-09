@@ -5,9 +5,14 @@ import PostContent from "@/components/PostContent"
 
 export default async function SinglePost({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const post = await prisma.post.findUnique({
-    where: { id }
-  })
+  let post = null
+  try {
+    post = await prisma.post.findUnique({
+      where: { id }
+    })
+  } catch (error: any) {
+    console.error('Error fetching post:', error?.message || error)
+  }
 
   if (!post) {
     return (
