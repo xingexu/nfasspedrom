@@ -7,18 +7,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum DraftStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model Post {
-  id            String    @id @default(cuid())
-  title         String
-  content       String
-  excerpt       String?
-  slug          String?   @unique
-  date          DateTime  @default(now())
-  postDate      DateTime? @map("post_date")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-  published     Boolean   @default(true)
-  coverImageUrl String?   @map("cover_image_url")
+  id              String       @id @default(cuid())
+  title           String
+  content         String
+  excerpt         String?
+  slug            String?      @unique
+  date            DateTime     @default(now())
+  postDate        DateTime?    @map("post_date")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  published       Boolean      @default(true)
+  coverImageUrl   String?      @map("cover_image_url")
+  status          PostStatus   @default(PUBLISHED)
+  authorId        String?
+  author          User?        @relation(fields: [authorId], references: [id])
+  views           Int          @default(0)
+  lastViewedAt    DateTime?
+  commentCount    Int          @default(0)
+  likesCount      Int          @default(0)
+  bookmarksCount  Int          @default(0)
+  tags            String[]     @default([])
+  draftUpdatedAt  DateTime?
+  readingTime     Int?
+  comments        Comment[]
+  likes           PostLike[]
+  bookmarks       Bookmark[]
+  drafts          Draft[]
 
   @@map("Post")
 }
@@ -39,4 +71,93 @@ model About {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("About")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  username     String        @unique
+  email        String?       @unique
+  name         String?
+  avatarUrl    String?
+  bio          String?
+  joinedAt     DateTime      @default(now()) @map("joined_at")
+  role         UserRole      @default(USER)
+  posts        Post[]
+  comments     Comment[]
+  likes        PostLike[]
+  bookmarks    Bookmark[]
+  commentLikes CommentLike[]
+  drafts       Draft[]
+}
+
+model Comment {
+  id         String       @id @default(cuid())
+  content    String
+  postId     String
+  authorId   String?
+  parentId   String?
+  likes      Int          @default(0)
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  post       Post         @relation(fields: [postId], references: [id])
+  author     User?        @relation(fields: [authorId], references: [id])
+  parent     Comment?     @relation("CommentToComment", fields: [parentId], references: [id])
+  replies    Comment[]    @relation("CommentToComment")
+  likedBy    CommentLike[]
+
+  @@index([postId])
+  @@index([parentId])
+}
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  userId    String
+  commentId String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId])
+}
+
+model PostLike {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+}
+
+model Draft {
+  id            String       @id @default(cuid())
+  title         String
+  content       String
+  excerpt       String?
+  slug          String?      @unique
+  coverImageUrl String?
+  status        DraftStatus  @default(DRAFT)
+  autosavedAt   DateTime?
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  authorId      String?
+  postId        String?
+  author        User?        @relation(fields: [authorId], references: [id])
+  post          Post?        @relation(fields: [postId], references: [id])
+
+  @@index([authorId])
+  @@index([postId])
 }

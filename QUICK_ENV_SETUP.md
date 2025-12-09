@@ -81,3 +81,5 @@ This will automatically add all environment variables to Vercel.
 ## ✅ Done!
 
 Once you've added the variables and redeployed, your journal should be fully functional!
+
+

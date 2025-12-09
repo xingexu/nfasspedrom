@@ -29,11 +29,11 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  readonly children: React.ReactNode
 }) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable}`}>
-      <body className="font-body bg-white text-text antialiased">
+      <body className="font-body bg-[#FAFAF7] text-text antialiased">
         {children}
         <ConditionalFooter />
       </body>

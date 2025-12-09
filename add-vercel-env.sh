@@ -54,3 +54,5 @@ echo "📋 Next steps:"
 echo "1. Redeploy your application in Vercel"
 echo "2. Check database health: https://nfast.vercel.app/api/health/db"
 echo "3. Try logging in: https://nfast.vercel.app/login"
+
+

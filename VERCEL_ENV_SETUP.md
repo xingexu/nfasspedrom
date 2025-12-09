@@ -90,3 +90,5 @@ If login still doesn't work after setting environment variables:
 ### Security Note
 
 ⚠️ **Important**: Never commit `.env` files or expose credentials in your code. Always use environment variables in production.
+
+

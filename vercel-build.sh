@@ -23,3 +23,5 @@ echo "🏗️ Building Next.js application..."
 next build
 
 echo "✅ Build complete!"
+
+

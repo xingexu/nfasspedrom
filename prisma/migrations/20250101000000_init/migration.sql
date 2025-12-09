@@ -27,3 +27,5 @@ CREATE TABLE "Image" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Post_slug_key" ON "Post"("slug");
+
+

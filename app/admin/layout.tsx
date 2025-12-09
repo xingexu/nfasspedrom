@@ -7,7 +7,7 @@ export default async function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-[#FAFAF7] flex flex-col">
       <LogoScrollBar />
       <div className="border-b border-neutral-100">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">

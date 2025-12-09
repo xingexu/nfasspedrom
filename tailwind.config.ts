@@ -10,12 +10,14 @@ const config: Config = {
     extend: {
       colors: {
         primary: '#FF003D',
-        background: '#FFFFFF',
+        background: '#FAFAF7',
         surface: '#FFFFFF',
-        text: '#111111',
-        'muted-border': '#E5E5E5',
-        'subtle-highlight': '#FFE6EC',
-        'text-muted': '#A3A3A3',
+        text: '#1F1B16',
+        'muted-border': '#E4DFD7',
+        'subtle-highlight': '#F6F1E6',
+        'text-muted': '#85776B',
+        'card-border': '#EDE6DA',
+        'card-shadow': '#E8E1D6',
       },
       fontFamily: {
         heading: ['var(--font-heading)', 'serif'],
