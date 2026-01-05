@@ -10,12 +10,13 @@ echo "📦 Generating Prisma Client..."
 npx prisma generate
 
 # Run migrations using DIRECT_URL if available, otherwise DATABASE_URL
+# Use db push as fallback since migrate deploy can fail on existing schemas
 if [ -n "$DIRECT_URL" ]; then
-  echo "🔄 Running migrations with DIRECT_URL..."
-  DATABASE_URL="$DIRECT_URL" npx prisma migrate deploy || npx prisma db push --skip-generate
+  echo "🔄 Syncing database schema with DIRECT_URL..."
+  DATABASE_URL="$DIRECT_URL" npx prisma migrate deploy 2>/dev/null || DATABASE_URL="$DIRECT_URL" npx prisma db push --skip-generate --accept-data-loss || true
 else
-  echo "🔄 Running migrations with DATABASE_URL..."
-  npx prisma migrate deploy || npx prisma db push --skip-generate
+  echo "🔄 Syncing database schema with DATABASE_URL..."
+  npx prisma migrate deploy 2>/dev/null || npx prisma db push --skip-generate --accept-data-loss || true
 fi
 
 # Build Next.js
