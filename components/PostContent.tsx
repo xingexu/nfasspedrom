@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface PostContentProps {
   content: string
@@ -10,6 +10,7 @@ interface PostContentProps {
 export default function PostContent({ content, maxLength = 500 }: PostContentProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [textLength, setTextLength] = useState(0)
+  const contentRef = useRef<HTMLDivElement>(null)
   
   // Check if content is HTML
   const isHTML = content.includes('<') && content.includes('>')
@@ -24,6 +25,69 @@ export default function PostContent({ content, maxLength = 500 }: PostContentPro
       setTextLength(content.length)
     }
   }, [content, isHTML])
+
+  // Process spoiler images - add blur and reveal functionality
+  useEffect(() => {
+    if (isHTML && typeof window !== 'undefined' && contentRef.current) {
+      const images = Array.from(contentRef.current.querySelectorAll('img[data-spoiler="true"]:not([data-spoiler-processed])'))
+      images.forEach((img) => {
+        img.setAttribute('data-spoiler-processed', 'true')
+        const src = img.getAttribute('src') || ''
+        const alt = img.getAttribute('alt') || ''
+        const parent = img.parentNode
+        
+        if (!parent) return
+        
+        // Create wrapper
+        const wrapper = document.createElement('div')
+        wrapper.className = 'relative inline-block max-w-full my-4'
+        
+        // Clone the image to avoid DOM manipulation issues
+        const imgClone = img.cloneNode(true) as HTMLImageElement
+        
+        // Apply blur to cloned image
+        imgClone.style.filter = 'blur(20px)'
+        imgClone.style.opacity = '0.9'
+        imgClone.style.transition = 'all 0.5s ease'
+        imgClone.style.userSelect = 'none'
+        imgClone.style.pointerEvents = 'none'
+        imgClone.draggable = false
+        
+        // Create overlay with eye icon
+        const overlay = document.createElement('div')
+        overlay.className = 'absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm cursor-pointer hover:bg-black/40 transition-all duration-300'
+        
+        const button = document.createElement('button')
+        button.className = 'flex flex-col items-center gap-3 px-6 py-4 bg-black/60 hover:bg-black/70 rounded-xl backdrop-blur-md transition-all duration-300 hover:scale-110 group'
+        button.setAttribute('aria-label', 'Reveal image')
+        
+        button.innerHTML = `
+          <svg class="w-8 h-8 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <span class="text-white text-sm font-medium">Click to reveal</span>
+        `
+        
+        const revealImage = () => {
+          imgClone.style.filter = 'none'
+          imgClone.style.opacity = '1'
+          overlay.style.display = 'none'
+        }
+        
+        button.addEventListener('click', revealImage)
+        overlay.addEventListener('click', revealImage)
+        overlay.appendChild(button)
+        
+        // Add cloned image and overlay to wrapper
+        wrapper.appendChild(imgClone)
+        wrapper.appendChild(overlay)
+        
+        // Replace the original image with the wrapper
+        parent.replaceChild(wrapper, img)
+      })
+    }
+  }, [isHTML, content])
   
   const shouldTruncate = textLength > maxLength && !isExpanded
 
@@ -31,6 +95,7 @@ export default function PostContent({ content, maxLength = 500 }: PostContentPro
     <div className="text-text">
       {isHTML ? (
         <div 
+          ref={contentRef}
           dangerouslySetInnerHTML={{ __html: content }}
           className="[&_p]:mb-4 [&_p]:leading-relaxed [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4 [&_code]:bg-neutral-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_pre]:bg-neutral-100 [&_pre]:p-4 [&_pre]:rounded [&_pre]:overflow-x-auto [&_pre]:my-4 [&_a]:text-primary [&_a]:underline [&_a]:hover:opacity-70 [&_img]:max-w-full [&_img]:h-auto [&_img]:my-4 [&_img]:rounded [&_video]:max-w-full [&_video]:h-auto [&_video]:my-4 [&_video]:rounded"
         />

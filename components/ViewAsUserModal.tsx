@@ -69,7 +69,7 @@ export default function ViewAsUserModal({ isOpen, onClose }: ViewAsUserModalProp
         {/* Iframe with site preview */}
         <div className="flex-1 overflow-hidden">
           <iframe
-            src="/"
+            src="/preview"
             className="w-full h-full border-0"
             title="Site Preview"
           />

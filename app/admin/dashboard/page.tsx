@@ -2,6 +2,9 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import prisma from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
+import ViewAsUserButton from '@/components/ViewAsUserButton'
+import { AdminLogoutButton } from '@/components/AdminLogoutButton'
+import PostDeleteButton from '@/components/PostDeleteButton'
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME?.trim() || 'bigguy'
 
@@ -72,186 +75,137 @@ export default async function AdminDashboardPage() {
 
   const cards = [
     { label: 'Total posts', value: stats.posts, hint: `${stats.publishedPosts} published`, tone: 'primary' },
-    { label: 'Comments', value: stats.comments, hint: 'Moderation required soon', tone: 'amber' },
-    { label: 'Users', value: stats.users, hint: 'Admins by invite only', tone: 'slate' },
+    { label: 'Comments', value: stats.comments, hint: null, tone: null },
+    { label: 'Users', value: stats.users, hint: null, tone: null },
   ]
 
-  const toneClass = {
-    primary: 'bg-primary/10 text-primary',
-    amber: 'bg-amber-100 text-amber-800',
-    slate: 'bg-slate-100 text-slate-700',
-  } as const
-
   return (
-    <div className="bg-[#FAFAF7] min-h-screen">
-      <div className="max-w-7xl mx-auto px-6 py-12 space-y-10">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div className="bg-gradient-to-b from-white via-neutral-50/30 to-white min-h-screen">
+      <div className="max-w-6xl mx-auto px-8 py-16 space-y-16">
+        {/* Title Section - Editorial Style */}
+        <div className="space-y-12">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-text/60">Admin Control</p>
-            <h1 className="text-3xl md:text-4xl font-bold text-text" style={{ fontFamily: 'var(--font-heading)' }}>
-              Dashboard overview
+            <h1 className="text-6xl md:text-7xl font-bold text-text mb-6 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+              Admin Dashboard
             </h1>
-            <p className="text-text/70 mt-2">Monitor content, moderation, and users at a glance.</p>
+            <div className="w-24 h-px bg-neutral-200"></div>
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* Header Actions - Subtle */}
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl border-2 border-neutral-200 bg-white px-4 py-2.5">
+                <ViewAsUserButton />
+              </div>
+              <Link
+                href="/admin/about"
+                className="rounded-xl border-2 border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-text/60 hover:text-text hover:border-neutral-300 transition-all"
+              >
+                Edit about page
+              </Link>
+            </div>
             <Link
-              href="/posts/new"
-              className="rounded-lg bg-primary text-white px-4 py-2.5 text-sm font-semibold shadow-md hover:shadow-lg hover:shadow-primary/30 transition-all"
+              href="/admin/posts/new"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary text-white px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               Create post
-            </Link>
-            <Link
-              href="/admin/about"
-              className="rounded-lg border border-[#E4DFD7] bg-white px-4 py-2.5 text-sm font-semibold text-text hover:border-primary/40 hover:text-primary transition-colors"
-            >
-              Edit about page
             </Link>
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card) => (
-            <div
-              key={card.label}
-              className="rounded-2xl border border-white/60 bg-white/80 p-5 shadow-sm backdrop-blur smooth-shadow"
+        {/* Stats Cards - Elegant Boxes */}
+        <div className="grid gap-6 sm:grid-cols-3">
+          {cards.map((card, index) => (
+            <div 
+              key={card.label} 
+              className="rounded-2xl bg-white border-2 border-neutral-200 p-8 hover:bg-neutral-50/50 hover:border-neutral-300 transition-all duration-300 shadow-sm hover:shadow-md"
             >
-              <p className="text-xs font-semibold uppercase tracking-wide text-text/60">{card.label}</p>
-              <div className="mt-2 flex items-center gap-3">
-                <span className="text-3xl font-bold text-text" style={{ fontFamily: 'var(--font-heading)' }}>
+              <p className="text-xs font-semibold tracking-wide text-text/50 uppercase mb-4">
+                {card.label}
+              </p>
+              <div className="flex items-baseline gap-3">
+                <span className="text-5xl font-bold text-text transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
                   {card.value}
                 </span>
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${toneClass[card.tone] ?? toneClass.slate}`}
-                >
-                  {card.hint}
-                </span>
+                {card.hint && (
+                  <span className="text-sm font-medium text-text/50">
+                    {card.hint}
+                  </span>
+                )}
               </div>
             </div>
           ))}
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 rounded-2xl border border-white/60 bg-white/80 p-6 shadow-sm backdrop-blur smooth-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-text/60">Content</p>
-                <h2 className="text-xl font-semibold text-text" style={{ fontFamily: 'var(--font-heading)' }}>
-                  Recent posts
-                </h2>
-              </div>
-              <Link href="/admin/posts/new" className="text-sm font-semibold text-primary hover:text-primary/80">
-                New post →
-              </Link>
-            </div>
-
-            <div className="overflow-hidden rounded-xl border border-[#E4DFD7] bg-white">
-              <div className="grid grid-cols-4 border-b border-[#E4DFD7] bg-[#F8F4ED] px-4 py-3 text-sm font-semibold text-text/70">
-                <span>Title</span>
-                <span>Status</span>
-                <span>Updated</span>
-                <span className="text-right">Actions</span>
-              </div>
-              <div className="divide-y divide-[#F0E9DF]">
-                {posts.length === 0 ? (
-                  <div className="px-4 py-6 text-sm text-text/60">No posts yet.</div>
-                ) : (
-                  posts.map((post) => (
-                    <div key={post.id} className="grid grid-cols-4 items-center px-4 py-3 text-sm text-text/80">
-                      <span className="truncate font-semibold text-text">{post.title || 'Untitled'}</span>
-                      <span
-                        className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
-                          post.status === 'Published'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}
-                      >
-                        <span className="h-2 w-2 rounded-full bg-current" />
-                        {post.status}
-                      </span>
-                      <span className="text-text/60">
-                        {new Date(post.updatedAt ?? post.date).toLocaleDateString()}
-                      </span>
-                      <div className="flex justify-end gap-2">
-                        <Link
-                          href={`/posts/${post.id}`}
-                          className="rounded-lg border border-[#E4DFD7] px-3 py-1 hover:border-primary/40 hover:text-primary transition-colors"
-                        >
-                          View
-                        </Link>
-                        <Link
-                          href={`/admin/posts/${post.id}/edit`}
-                          className="rounded-lg bg-primary/10 px-3 py-1 font-semibold text-primary hover:bg-primary/15 transition-colors"
-                        >
-                          Edit
-                        </Link>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
+        {/* Recent Posts Section - Elegant Box */}
+        <div className="rounded-2xl bg-white border-2 border-neutral-200 p-8 space-y-6 hover:border-neutral-300 transition-all duration-300 shadow-sm hover:shadow-md">
+          <div className="flex items-center justify-between">
+            <h2 className="text-3xl font-bold text-text transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
+              Recent posts
+            </h2>
+            <Link 
+              href="/admin/posts/new" 
+              className="text-sm font-semibold text-text/60 hover:text-text transition-colors"
+            >
+              New post →
+            </Link>
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-2xl border border-white/60 bg-white/80 p-5 shadow-sm backdrop-blur smooth-shadow">
-              <p className="text-xs font-semibold uppercase tracking-wide text-text/60">Quick actions</p>
-              <h3 className="text-lg font-semibold text-text mt-1" style={{ fontFamily: 'var(--font-heading)' }}>
-                Admin utilities
-              </h3>
-              <div className="mt-4 space-y-3">
-                <Link
-                  href="/admin/about"
-                  className="flex items-center justify-between rounded-lg border border-[#E4DFD7] bg-[#FDFBF7] px-4 py-3 text-sm font-semibold text-text hover:border-primary/40 hover:text-primary transition-colors"
-                >
-                  <span>Update About content</span>
-                  <span aria-hidden className="ml-2">→</span>
-                </Link>
-                <Link
-                  href="/posts/new"
-                  className="flex items-center justify-between rounded-lg border border-[#E4DFD7] bg-white px-4 py-3 text-sm font-semibold text-text hover:border-primary/40 hover:text-primary transition-colors"
-                >
-                  <span>Publish a new post</span>
-                  <span aria-hidden className="ml-2">→</span>
-                </Link>
-                <Link
-                  href="/admin/login"
-                  className="flex items-center justify-between rounded-lg border border-[#E4DFD7] bg-white px-4 py-3 text-sm font-semibold text-text hover:border-primary/40 hover:text-primary transition-colors"
-                >
-                  <span>Manage sessions</span>
-                  <span aria-hidden className="ml-2">→</span>
-                </Link>
-              </div>
+          {posts.length === 0 ? (
+            <div className="py-16 text-center">
+              <p className="text-sm text-text/40">No posts yet</p>
             </div>
+          ) : (
+            <div className="space-y-0 divide-y divide-neutral-200">
+              {posts.map((post) => (
+                <div 
+                  key={post.id} 
+                  className="group grid grid-cols-12 items-center gap-6 py-5 hover:bg-neutral-50/50 transition-colors rounded-xl -mx-2 px-2"
+                >
+                  <div className="col-span-6">
+                    <span className="font-semibold text-text group-hover:text-text/80 transition-colors">
+                      {post.title || 'Untitled'}
+                    </span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-xs font-semibold text-text/50 uppercase tracking-wide border border-neutral-200 rounded-full px-2 py-1 inline-block">
+                      {post.status}
+                    </span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-sm text-text/50 font-medium">
+                      {new Date(post.updatedAt ?? post.date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                  <div className="col-span-2 flex justify-end gap-3">
+                    <Link
+                      href={`/posts/${post.id}`}
+                      className="text-xs font-semibold text-text/50 hover:text-text transition-colors rounded-lg border border-neutral-200 px-2 py-1 hover:border-neutral-300"
+                    >
+                      View
+                    </Link>
+                    <Link
+                      href={`/admin/posts/${post.id}/edit`}
+                      className="text-xs font-semibold text-primary hover:bg-primary/10 transition-colors rounded-lg border border-primary/30 px-2 py-1 hover:border-primary/50"
+                    >
+                      Edit
+                    </Link>
+                    <PostDeleteButton postId={post.id} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-            <div className="rounded-2xl border border-white/60 bg-white/80 p-5 shadow-sm backdrop-blur smooth-shadow">
-              <p className="text-xs font-semibold uppercase tracking-wide text-text/60">System</p>
-              <h3 className="text-lg font-semibold text-text mt-1" style={{ fontFamily: 'var(--font-heading)' }}>
-                Status
-              </h3>
-              <ul className="mt-4 space-y-3 text-sm text-text/80">
-                <li className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-green-500" aria-hidden />
-                    <span>API health</span>
-                  </div>
-                  <span className="text-xs font-semibold text-green-700">Operational</span>
-                </li>
-                <li className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-green-500" aria-hidden />
-                    <span>Database connectivity</span>
-                  </div>
-                  <span className="text-xs font-semibold text-green-700">Online</span>
-                </li>
-                <li className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-amber-500" aria-hidden />
-                    <span>Comment moderation</span>
-                  </div>
-                  <span className="text-xs font-semibold text-amber-800">Pending setup</span>
-                </li>
-              </ul>
-            </div>
+        {/* Logout - Subtle Footer */}
+        <div className="pt-12 border-t border-neutral-100">
+          <div className="flex justify-end">
+            <AdminLogoutButton />
           </div>
         </div>
       </div>

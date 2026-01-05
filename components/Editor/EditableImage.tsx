@@ -34,6 +34,10 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
     const style = node.attrs.style || ''
     return style.includes('invert')
   })
+  const [isSpoiler, setIsSpoiler] = useState(() => {
+    // Check if image is marked as spoiler - ensure boolean
+    return !!(node.attrs['data-spoiler'] === 'true' || node.attrs.class?.includes('spoiler'))
+  })
   const imageRef = useRef<HTMLImageElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -46,7 +50,11 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
     // Sync invert state
     const style = node.attrs.style || ''
     setIsInverted(style.includes('invert'))
-  }, [node.attrs.width, node.attrs.height, node.attrs.style])
+    
+    // Sync spoiler state - ensure boolean
+    const spoilerAttr = !!(node.attrs['data-spoiler'] === 'true' || node.attrs.class?.includes('spoiler'))
+    setIsSpoiler(spoilerAttr)
+  }, [node.attrs.width, node.attrs.height, node.attrs.style, node.attrs['data-spoiler'], node.attrs.class])
 
   const onCropComplete = (_croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels)
@@ -113,6 +121,14 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
     setIsInverted(newInverted)
     updateAttributes({ 
       style: newInverted ? 'filter: invert(1);' : '' 
+    })
+  }
+
+  const handleSpoilerToggle = () => {
+    const newSpoiler = !isSpoiler
+    setIsSpoiler(newSpoiler)
+    updateAttributes({ 
+      'data-spoiler': newSpoiler ? 'true' : 'false'
     })
   }
 
@@ -285,6 +301,32 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
                   onChange={(e) => setRotation(Number(e.target.value))}
                   className="w-full"
                 />
+              </div>
+              <div className="flex items-center gap-6 pt-4 border-t border-neutral-200">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isInverted}
+                    onChange={handleInvert}
+                    className="w-4 h-4 rounded border-neutral-300 text-primary focus:ring-primary"
+                  />
+                  <span className="text-sm font-medium">Invert colors</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={!!isSpoiler}
+                    onChange={handleSpoilerToggle}
+                    className="w-4 h-4 rounded border-neutral-300 text-primary focus:ring-primary"
+                  />
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Hide image (spoiler)
+                  </span>
+                </label>
               </div>
             </div>
           </div>
@@ -508,6 +550,14 @@ export const EditableImage = Image.extend({
         renderHTML: (attributes) => {
           if (!attributes.style) return {}
           return { style: attributes.style }
+        },
+      },
+      'data-spoiler': {
+        default: null,
+        parseHTML: (element) => element.getAttribute('data-spoiler'),
+        renderHTML: (attributes) => {
+          if (!attributes['data-spoiler'] || attributes['data-spoiler'] === 'false') return {}
+          return { 'data-spoiler': attributes['data-spoiler'] }
         },
       },
     }

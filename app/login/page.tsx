@@ -36,7 +36,9 @@ export default function LoginPage() {
       })
 
       if (res.ok) {
-        router.push(from)
+        // Always redirect admins to dashboard, unless from is already an admin route
+        const redirectTo = from.startsWith('/admin') ? from : '/admin/dashboard'
+        router.push(redirectTo)
         router.refresh()
       } else {
         const data = await res.json().catch(() => ({}))

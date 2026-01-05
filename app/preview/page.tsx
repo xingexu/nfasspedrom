@@ -1,28 +1,20 @@
 import prisma from "@/lib/prisma"
 import Link from "next/link"
 import LogoScrollBar from "@/components/LogoScrollBar"
-import { getSession } from "@/lib/auth"
-import { redirect } from "next/navigation"
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME?.trim() || 'bigguy'
-
-export default async function Home() {
-  const session = await getSession()
-  const isLoggedIn = !!session
-  
-  // Redirect logged-in admins to dashboard
-  if (isLoggedIn && session?.username === ADMIN_USERNAME) {
-    redirect('/admin/dashboard')
-  }
+export default async function PreviewPage() {
+  // This page always shows the public view, regardless of admin status
+  // Used for the "View as User" preview in admin dashboard
 
   let posts = []
   try {
+    // Only show published posts in preview (public view)
     posts = await prisma.post.findMany({
+      where: { published: true },
       orderBy: { date: "desc" }
     })
   } catch (error: any) {
     console.error('Error fetching posts:', error?.message || error)
-    // Continue with empty posts array if database query fails
     posts = []
   }
 
@@ -40,30 +32,28 @@ export default async function Home() {
             <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"></div>
           </div>
           
-          {/* Login Button - Only show if not logged in */}
-          {!isLoggedIn && (
-            <div className="flex justify-center">
-              <Link
-                href="/login"
-                className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105"
+          {/* Login Button - Always show in preview */}
+          <div className="flex justify-center">
+            <Link
+              href="/login"
+              className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105"
+            >
+              <svg
+                className="w-4 h-4 transform group-hover:rotate-12 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  className="w-4 h-4 transform group-hover:rotate-12 transition-transform"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <span>Admin Login</span>
-              </Link>
-            </div>
-          )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              <span>Admin Login</span>
+            </Link>
+          </div>
         </div>
 
         {/* Posts List - Enhanced Design */}
@@ -177,7 +167,6 @@ export default async function Home() {
                             />
                           </svg>
                         </Link>
-                        
                       </div>
                     </div>
                   </div>
