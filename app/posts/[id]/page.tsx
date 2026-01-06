@@ -25,12 +25,32 @@ export default async function SinglePost({ params }: { params: Promise<{ id: str
     )
   }
 
-  const postDate = new Date(post.date)
-  const formattedDate = postDate.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  })
+  // Handle date formatting safely
+  let formattedDate = 'No date'
+  try {
+    if (post.date) {
+      const postDate = new Date(post.date)
+      if (!isNaN(postDate.getTime())) {
+        formattedDate = postDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      }
+    } else if (post.createdAt) {
+      const postDate = new Date(post.createdAt)
+      if (!isNaN(postDate.getTime())) {
+        formattedDate = postDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      }
+    }
+  } catch (error) {
+    console.error('Error formatting date:', error)
+    formattedDate = 'Invalid date'
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-neutral-50/30 to-white">
@@ -70,7 +90,7 @@ export default async function SinglePost({ params }: { params: Promise<{ id: str
 
         {/* Post Content */}
         <article 
-          className="max-w-none text-text leading-relaxed prose prose-lg prose-neutral"
+          className="max-w-none"
           style={{ fontFamily: 'var(--font-body)' }}
         >
           <PostContent content={post.content} maxLength={999999} />

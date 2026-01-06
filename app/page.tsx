@@ -12,6 +12,7 @@ export default async function Home() {
   let posts: Post[] = []
   try {
     posts = await prisma.post.findMany({
+      where: { published: true },
       orderBy: { date: "desc" }
     })
   } catch (error: any) {
@@ -126,12 +127,32 @@ export default async function Home() {
         ) : (
           <div className="space-y-16">
             {posts.map((post: any, index: number) => {
-              const postDate = new Date(post.date)
-              const formattedDate = postDate.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-              })
+              // Handle date formatting safely
+              let formattedDate = 'No date'
+              try {
+                if (post.date) {
+                  const postDate = new Date(post.date)
+                  if (!isNaN(postDate.getTime())) {
+                    formattedDate = postDate.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })
+                  }
+                } else if (post.createdAt) {
+                  const postDate = new Date(post.createdAt)
+                  if (!isNaN(postDate.getTime())) {
+                    formattedDate = postDate.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })
+                  }
+                }
+              } catch (error) {
+                console.error('Error formatting date:', error)
+                formattedDate = 'Invalid date'
+              }
               
               // Extract text content from HTML
               const textContent = post.content.replace(/<[^>]*>/g, '')
