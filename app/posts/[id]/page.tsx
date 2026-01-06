@@ -55,7 +55,7 @@ export default async function SinglePost({ params }: { params: Promise<{ id: str
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-neutral-50/30 to-white">
       <LogoScrollBar />
-      <div className="max-w-4xl mx-auto px-6 md:px-8 py-16 md:py-24 animate-fade-in">
+      <div className="max-w-3xl mx-auto px-6 md:px-8 py-16 md:py-24 animate-fade-in">
         {/* Back link */}
         <Link 
           href="/"
