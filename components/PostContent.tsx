@@ -290,13 +290,14 @@ export default function PostContent({ content, maxLength = 500 }: PostContentPro
         console.log('Found spoiler images in DOM:', spoilerImages.length, 'out of', allImages.length)
       
         spoilerImages.forEach((img) => {
-        // Skip if already processed
-        if (img.hasAttribute('data-spoiler-processed')) return
-        
-        img.setAttribute('data-spoiler-processed', 'true')
-        const src = img.getAttribute('src') || img.src || ''
-        const alt = img.getAttribute('alt') || ''
-        const parent = img.parentNode
+          // Skip if already processed
+          if (img.hasAttribute('data-spoiler-processed')) return
+          
+          const imgElement = img as HTMLImageElement
+          imgElement.setAttribute('data-spoiler-processed', 'true')
+          const src = imgElement.getAttribute('src') || imgElement.src || ''
+          const alt = imgElement.getAttribute('alt') || ''
+          const parent = imgElement.parentNode
         
         if (!parent) {
           console.warn('Spoiler image has no parent, skipping')
@@ -308,7 +309,7 @@ export default function PostContent({ content, maxLength = 500 }: PostContentPro
         wrapper.className = 'relative block w-full my-8'
         
         // Clone the image to avoid DOM manipulation issues
-        const imgClone = img.cloneNode(true) as HTMLImageElement
+        const imgClone = imgElement.cloneNode(true) as HTMLImageElement
         
         // Apply blur to cloned image
         imgClone.style.filter = 'blur(20px)'
@@ -350,7 +351,7 @@ export default function PostContent({ content, maxLength = 500 }: PostContentPro
         
         // Replace the original image with the wrapper
         try {
-          parent.replaceChild(wrapper, img)
+          parent.replaceChild(wrapper, imgElement)
           console.log('Successfully wrapped spoiler image:', src.substring(0, 50))
         } catch (error) {
           console.error('Error replacing spoiler image:', error, src)
