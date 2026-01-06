@@ -11,11 +11,12 @@ export default function BackButton({ isAdmin }: BackButtonProps) {
 
   const handleBack = (e: React.MouseEvent) => {
     e.preventDefault()
-    // If admin, always go back to dashboard
-    if (isAdmin) {
+    // Only go to dashboard if user is actually signed in as admin
+    // If not signed in or not admin, go to home page
+    if (isAdmin === true) {
       router.push('/admin/dashboard')
     } else {
-      // For non-admin users, go to home/journal
+      // For non-admin users or not signed in, go to home/journal
       router.push('/')
     }
   }
@@ -38,7 +39,7 @@ export default function BackButton({ isAdmin }: BackButtonProps) {
           d="M15 19l-7-7 7-7"
         />
       </svg>
-      <span>{isAdmin ? 'Back to Dashboard' : 'Back to Journal'}</span>
+      <span>{isAdmin === true ? 'Back to Dashboard' : 'Back to Journal'}</span>
     </button>
   )
 }

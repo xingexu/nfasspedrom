@@ -10,7 +10,8 @@ const ADMIN_USERNAME = process.env.ADMIN_USERNAME?.trim() || 'bigguy'
 export default async function SinglePost({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const session = await getSession()
-  const isAdmin = session?.username === ADMIN_USERNAME
+  // Only true if user is actually signed in AND is the admin
+  const isAdmin = !!(session?.username && session.username === ADMIN_USERNAME)
   
   let post = null
   try {
