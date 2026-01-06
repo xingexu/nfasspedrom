@@ -104,7 +104,7 @@ export default async function AdminCommentsPage() {
                       </div>
                       <p className="text-sm text-text/80 mb-2">{comment.content}</p>
                       <Link
-                        href={`/posts/${comment.postId}`}
+                        href={`/posts/${comment.postId}?from=/admin/comments`}
                         className="text-xs text-primary hover:underline"
                       >
                         View post: {comment.post?.title || 'Untitled'}

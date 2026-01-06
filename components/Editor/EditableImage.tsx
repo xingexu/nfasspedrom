@@ -23,7 +23,48 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
     width: node.attrs.width || 500, 
     height: node.attrs.height || 'auto' 
   })
-  const [position, setPosition] = useState({ x: 0, y: 0 })
+  // Parse position from style attribute
+  const parsePositionFromStyle = (style: string | null | undefined): { x: number; y: number } => {
+    if (!style) return { x: 0, y: 0 }
+    
+    // Match transform: translate(Xpx, Ypx)
+    const transformMatch = style.match(/transform:\s*translate\(([-\d.]+)px,\s*([-\d.]+)px\)/)
+    if (transformMatch) {
+      const x = parseFloat(transformMatch[1]) || 0
+      const y = parseFloat(transformMatch[2]) || 0
+      // Clamp to reasonable values for inline positioning (like Google Docs)
+      // Max 200px offset is reasonable for inline images
+      return {
+        x: Math.max(-200, Math.min(200, x)),
+        y: Math.max(-200, Math.min(200, y)),
+      }
+    }
+    
+    return { x: 0, y: 0 }
+  }
+
+  // Merge styles, preserving existing styles like invert filter
+  const mergeStyles = (existingStyle: string | null | undefined, position: { x: number; y: number }): string | null => {
+    const styles: string[] = []
+    
+    // Add position/transform if needed
+    if (position.x !== 0 || position.y !== 0) {
+      styles.push(`transform: translate(${position.x}px, ${position.y}px)`)
+      styles.push('position: relative')
+    }
+    
+    // Preserve existing filter (like invert) if it exists
+    if (existingStyle) {
+      const filterMatch = existingStyle.match(/filter:\s*[^;]+/)
+      if (filterMatch) {
+        styles.push(filterMatch[0])
+      }
+    }
+    
+    return styles.length > 0 ? styles.join('; ') : null
+  }
+
+  const [position, setPosition] = useState(() => parsePositionFromStyle(node.attrs.style))
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [isResizing, setIsResizing] = useState(false)
@@ -54,7 +95,61 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
     // Sync spoiler state - ensure boolean
     const spoilerAttr = !!(node.attrs['data-spoiler'] === 'true' || node.attrs.class?.includes('spoiler'))
     setIsSpoiler(spoilerAttr)
+    
+    // Sync position from style attribute
+    const parsedPosition = parsePositionFromStyle(node.attrs.style)
+    setPosition(parsedPosition)
   }, [node.attrs.width, node.attrs.height, node.attrs.style, node.attrs['data-spoiler'], node.attrs.class])
+
+  // CRITICAL: Ensure style attribute is ALWAYS synced with position
+  // This ensures the style is on the DOM element when TipTap serializes
+  // Use flushSync to ensure this runs synchronously after React renders
+  useEffect(() => {
+    // Use setTimeout to ensure this runs after React's inline styles are applied
+    const timeoutId = setTimeout(() => {
+      if (imageRef.current) {
+        // Build the style string from current state
+        const styleParts: string[] = []
+        
+        // Add transform if position is set
+        if (position.x !== 0 || position.y !== 0) {
+          styleParts.push(`transform: translate(${position.x}px, ${position.y}px)`)
+          styleParts.push('position: relative')
+        }
+        
+        // Preserve filter from node attributes if it exists
+        if (node.attrs.style) {
+          const filterMatch = (node.attrs.style as string).match(/filter:\s*[^;]+/)
+          if (filterMatch) {
+            styleParts.push(filterMatch[0])
+          }
+        }
+        
+        // ALWAYS set the style attribute on DOM - this is what TipTap serializes
+        const styleString = styleParts.length > 0 ? styleParts.join('; ') : ''
+        if (styleString) {
+          // Set on DOM element (for serialization) - this is CRITICAL
+          // This will override React's inline styles in the attribute
+          imageRef.current.setAttribute('style', styleString)
+          // Update node attributes to ensure it's saved
+          if (node.attrs.style !== styleString) {
+            updateAttributes({ style: styleString })
+          }
+        } else {
+          // Only remove if there's no style to preserve
+          const currentAttr = imageRef.current.getAttribute('style') || ''
+          if (currentAttr && !currentAttr.includes('filter:')) {
+            imageRef.current.removeAttribute('style')
+            if (node.attrs.style) {
+              updateAttributes({ style: null })
+            }
+          }
+        }
+      }
+    }, 0)
+    
+    return () => clearTimeout(timeoutId)
+  }, [position.x, position.y, node.attrs.style, updateAttributes])
 
   const onCropComplete = (_croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels)
@@ -186,20 +281,21 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
         const deltaX = e.clientX - dragStart.x
         const deltaY = e.clientY - dragStart.y
         
-        // Get current position from image
-        const currentLeft = imageRect.left - editorRect.left
-        const currentTop = imageRect.top - editorRect.top
+        // Use the current position state as base (not visual position) and add delta
+        let newX = position.x + deltaX
+        let newY = position.y + deltaY
         
-        // Calculate new position
-        let newX = currentLeft + deltaX
-        let newY = currentTop + deltaY
+        // CRITICAL: Constrain to reasonable values for inline positioning
+        // Images should only be offset slightly from their natural position (like Google Docs)
+        // Max offset of 200px in any direction is reasonable for inline images
+        const maxReasonableOffset = 200
         
-        // Constrain to editor bounds (accounting for image size)
-        const maxX = editorRect.width - imageRect.width
-        const maxY = editorRect.height - imageRect.height
+        // Constrain to editor bounds AND reasonable offset limits
+        const maxX = Math.min(editorRect.width - imageRect.width, maxReasonableOffset)
+        const maxY = Math.min(editorRect.height - imageRect.height, maxReasonableOffset)
         
-        newX = Math.max(0, Math.min(maxX, newX))
-        newY = Math.max(0, Math.min(maxY, newY))
+        newX = Math.max(-maxReasonableOffset, Math.min(maxX, newX))
+        newY = Math.max(-maxReasonableOffset, Math.min(maxY, newY))
         
         setPosition({ x: newX, y: newY })
         
@@ -218,11 +314,15 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
         setResizeHandle(null)
       }
       if (isDragging) {
-        // Save position as style attribute so it persists
-        if (position.x !== 0 || position.y !== 0) {
-          updateAttributes({ 
-            style: `transform: translate(${position.x}px, ${position.y}px); position: relative;` 
-          })
+        // Save position as style attribute so it persists, merging with existing styles
+        const mergedStyle = mergeStyles(node.attrs.style, position)
+        // CRITICAL: Update attributes immediately and ensure DOM is synced
+        updateAttributes({ 
+          style: mergedStyle || undefined
+        })
+        // Also ensure the style is on the DOM element right away
+        if (imageRef.current && mergedStyle) {
+          imageRef.current.setAttribute('style', mergedStyle)
         }
         setIsDragging(false)
       }
@@ -340,16 +440,48 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
       ref={containerRef}
       className={`editable-image-wrapper ${selected ? 'selected' : ''}`}
       style={{
-        display: 'inline-block',
-        margin: '1rem auto',
-        position: 'relative',
-        overflow: 'hidden',
+        display: 'block',
+        margin: '1rem 0',
+        position: 'relative', // Relative is OK for transform context, but ensure no float
+        overflow: 'visible',
+        float: 'none', // CRITICAL: No float
+        clear: 'both', // CRITICAL: Clear floats
+        width: '100%',
+        minHeight: typeof imageSize.height === 'number' ? `${imageSize.height}px` : 'auto',
       }}
       onMouseDown={handleMouseDown}
     >
       <img
-        ref={imageRef}
-        src={node.attrs.src}
+        ref={(el) => {
+          imageRef.current = el
+          // CRITICAL: Set style attribute on DOM element immediately when ref is set
+          // This ensures TipTap can serialize it when getHTML() is called
+          if (el) {
+            const styleParts: string[] = []
+            
+            // Add transform if position is set
+            if (position.x !== 0 || position.y !== 0) {
+              styleParts.push(`transform: translate(${position.x}px, ${position.y}px)`)
+              styleParts.push('position: relative')
+            }
+            
+            // Preserve filter from node attributes if it exists
+            if (node.attrs.style) {
+              const filterMatch = (node.attrs.style as string).match(/filter:\s*[^;]+/)
+              if (filterMatch) {
+                styleParts.push(filterMatch[0])
+              }
+            }
+            
+            // Set the style attribute on the DOM element
+            if (styleParts.length > 0) {
+              el.setAttribute('style', styleParts.join('; '))
+            } else if (el.hasAttribute('style') && !el.getAttribute('style')?.includes('filter:')) {
+              el.removeAttribute('style')
+            }
+          }
+        }}
+        src={node.attrs.src || ''}
         alt={node.attrs.alt || ''}
         style={{
           width: typeof imageSize.width === 'number' ? `${imageSize.width}px` : imageSize.width,
@@ -360,12 +492,17 @@ const EditableImageComponent = ({ node, updateAttributes, selected }: EditableIm
           border: selected ? '2px solid #FF003D' : '2px solid transparent',
           borderRadius: '4px',
           userSelect: 'none',
-          transform: isDragging ? `translate(${position.x}px, ${position.y}px)` : undefined,
-          transition: isDragging || isResizing ? 'none' : 'width 0.1s, height 0.1s',
+          transform: (isDragging || position.x !== 0 || position.y !== 0) ? `translate(${position.x}px, ${position.y}px)` : undefined,
+          position: (position.x !== 0 || position.y !== 0) ? 'relative' : 'static',
+          transition: isDragging || isResizing ? 'none' : 'width 0.1s, height 0.1s, transform 0.1s',
           filter: isInverted ? 'invert(1)' : undefined,
+          zIndex: (isDragging || position.x !== 0 || position.y !== 0) ? 1 : 'auto',
         }}
         draggable={false}
         onDoubleClick={() => setIsEditing(true)}
+        onError={(e) => {
+          console.error('Image failed to load:', node.attrs.src)
+        }}
       />
       {selected && (
         <>

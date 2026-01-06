@@ -74,61 +74,64 @@ export default async function AdminDashboardPage() {
   const [stats, posts] = await Promise.all([getStats(), getRecentPosts()])
 
   const cards = [
-    { label: 'Total posts', value: stats.posts, hint: `${stats.publishedPosts} published`, tone: 'primary' },
+    { label: 'Posts', value: stats.posts, hint: stats.posts !== stats.publishedPosts ? `${stats.publishedPosts} published` : null, tone: 'primary' },
     { label: 'Comments', value: stats.comments, hint: null, tone: null },
     { label: 'Users', value: stats.users, hint: null, tone: null },
   ]
 
   return (
-    <div className="bg-gradient-to-b from-white via-neutral-50/30 to-white min-h-screen">
-      <div className="max-w-6xl mx-auto px-8 py-16 space-y-16">
-        {/* Title Section - Editorial Style */}
-        <div className="space-y-12">
-          <div>
-            <h1 className="text-6xl md:text-7xl font-bold text-text mb-6 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-              Admin Dashboard
-            </h1>
-            <div className="w-24 h-px bg-neutral-200"></div>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Header */}
+        <div className="mb-10">
+          <div className="flex items-start justify-between mb-8">
+            <div>
+              <h1 className="text-4xl font-bold text-text mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+                Dashboard
+              </h1>
+              <p className="text-sm text-text/60">Overview of your content</p>
+            </div>
           </div>
-
-          {/* Header Actions - Subtle */}
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="rounded-xl border-2 border-neutral-200 bg-white px-4 py-2.5">
-                <ViewAsUserButton />
-              </div>
-              <Link
-                href="/admin/about"
-                className="rounded-xl border-2 border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-text/60 hover:text-text hover:border-neutral-300 transition-all"
-              >
-                Edit about page
-              </Link>
+          
+          {/* Action Buttons - Spacious Layout */}
+          <div className="flex items-center gap-3">
+            <div className="border border-neutral-200 rounded-md bg-white hover:border-neutral-300 transition-colors">
+              <ViewAsUserButton />
             </div>
             <Link
-              href="/admin/posts/new"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary text-white px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
+              href="/admin/about"
+              className="text-sm font-medium text-text/70 hover:text-text transition-colors px-4 py-2 border border-neutral-200 rounded-md bg-white hover:border-neutral-300"
             >
-              Create post
+              About
+            </Link>
+            <Link
+              href="/admin/posts/new"
+              className="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm border border-primary"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              New Post
             </Link>
           </div>
         </div>
 
-        {/* Stats Cards - Elegant Boxes */}
-        <div className="grid gap-6 sm:grid-cols-3">
-          {cards.map((card, index) => (
+        {/* Stats Cards - Modern Grid */}
+        <div className="grid gap-5 sm:grid-cols-3 mb-8">
+          {cards.map((card) => (
             <div 
               key={card.label} 
-              className="rounded-2xl bg-white border-2 border-neutral-200 p-8 hover:bg-neutral-50/50 hover:border-neutral-300 transition-all duration-300 shadow-sm hover:shadow-md"
+              className="bg-white rounded-xl p-6 shadow-sm border border-neutral-100 hover:shadow-md transition-shadow"
             >
-              <p className="text-xs font-semibold tracking-wide text-text/50 uppercase mb-4">
+              <p className="text-xs font-semibold text-text/50 uppercase tracking-wider mb-3">
                 {card.label}
               </p>
-              <div className="flex items-baseline gap-3">
-                <span className="text-5xl font-bold text-text transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
+              <div className="flex items-end gap-3">
+                <span className="text-4xl font-bold text-text" style={{ fontFamily: 'var(--font-heading)' }}>
                   {card.value}
                 </span>
                 {card.hint && (
-                  <span className="text-sm font-medium text-text/50">
+                  <span className="text-sm text-text/40 mb-1">
                     {card.hint}
                   </span>
                 )}
@@ -137,64 +140,65 @@ export default async function AdminDashboardPage() {
           ))}
         </div>
 
-        {/* Recent Posts Section - Elegant Box */}
-        <div className="rounded-2xl bg-white border-2 border-neutral-200 p-8 space-y-6 hover:border-neutral-300 transition-all duration-300 shadow-sm hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-bold text-text transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
-              Recent posts
+        {/* Recent Posts - Card Style */}
+        <div className="bg-white rounded-xl shadow-sm border border-neutral-100 overflow-hidden">
+          <div className="px-6 py-4 border-b border-neutral-100 bg-neutral-50/50">
+            <h2 className="text-lg font-semibold text-text">
+              Recent Posts
             </h2>
-            <Link 
-              href="/admin/posts/new" 
-              className="text-sm font-semibold text-text/60 hover:text-text transition-colors"
-            >
-              New post →
-            </Link>
           </div>
 
           {posts.length === 0 ? (
             <div className="py-16 text-center">
               <p className="text-sm text-text/40">No posts yet</p>
+              <Link 
+                href="/admin/posts/new"
+                className="inline-block mt-4 text-sm text-primary hover:text-primary/80 font-medium"
+              >
+                Create your first post →
+              </Link>
             </div>
           ) : (
-            <div className="space-y-0 divide-y divide-neutral-200">
+            <div className="divide-y divide-neutral-100">
               {posts.map((post) => (
                 <div 
                   key={post.id} 
-                  className="group grid grid-cols-12 items-center gap-6 py-5 hover:bg-neutral-50/50 transition-colors rounded-xl -mx-2 px-2"
+                  className="group px-6 py-4 hover:bg-neutral-50/50 transition-colors"
                 >
-                  <div className="col-span-6">
-                    <span className="font-semibold text-text group-hover:text-text/80 transition-colors">
-                      {post.title || 'Untitled'}
-                    </span>
-                  </div>
-                  <div className="col-span-2">
-                    <span className="text-xs font-semibold text-text/50 uppercase tracking-wide border border-neutral-200 rounded-full px-2 py-1 inline-block">
-                      {post.status}
-                    </span>
-                  </div>
-                  <div className="col-span-2">
-                    <span className="text-sm text-text/50 font-medium">
-                      {new Date(post.updatedAt ?? post.date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </span>
-                  </div>
-                  <div className="col-span-2 flex justify-end gap-3">
-                    <Link
-                      href={`/posts/${post.id}`}
-                      className="text-xs font-semibold text-text/50 hover:text-text transition-colors rounded-lg border border-neutral-200 px-2 py-1 hover:border-neutral-300"
-                    >
-                      View
-                    </Link>
-                    <Link
-                      href={`/admin/posts/${post.id}/edit`}
-                      className="text-xs font-semibold text-primary hover:bg-primary/10 transition-colors rounded-lg border border-primary/30 px-2 py-1 hover:border-primary/50"
-                    >
-                      Edit
-                    </Link>
-                    <PostDeleteButton postId={post.id} />
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-medium text-text group-hover:text-primary transition-colors mb-1.5 truncate">
+                        {post.title || 'Untitled'}
+                      </h3>
+                      <div className="flex items-center gap-4 text-xs text-text/50">
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className={`w-1.5 h-1.5 rounded-full ${post.published ? 'bg-green-500' : 'bg-neutral-400'}`}></span>
+                          {post.status}
+                        </span>
+                        <span>
+                          {new Date(post.updatedAt ?? post.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Link
+                        href={`/posts/${post.id}?from=/admin/dashboard`}
+                        className="text-xs font-medium text-text/70 hover:text-text transition-colors px-3 py-1.5 rounded-md border border-neutral-200 bg-white hover:border-neutral-300"
+                      >
+                        View
+                      </Link>
+                      <Link
+                        href={`/admin/posts/${post.id}/edit`}
+                        className="text-xs font-medium text-primary hover:text-primary/80 transition-colors px-3 py-1.5 rounded-md border border-primary/30 bg-white hover:border-primary/50 hover:bg-primary/5"
+                      >
+                        Edit
+                      </Link>
+                      <PostDeleteButton postId={post.id} />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -202,8 +206,8 @@ export default async function AdminDashboardPage() {
           )}
         </div>
 
-        {/* Logout - Subtle Footer */}
-        <div className="pt-12 border-t border-neutral-100">
+        {/* Footer */}
+        <div className="mt-8 pt-6 border-t border-neutral-200">
           <div className="flex justify-end">
             <AdminLogoutButton />
           </div>

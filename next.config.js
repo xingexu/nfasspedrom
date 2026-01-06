@@ -11,6 +11,10 @@ const nextConfig = {
         hostname: '**',
       },
     ],
+    // Allow base64 data URLs (for editor images)
+    unoptimized: false,
+    // Allow all image formats
+    formats: ['image/avif', 'image/webp'],
   },
   // Performance optimizations
   experimental: {

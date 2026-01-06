@@ -51,4 +51,43 @@
   .smooth-shadow-lg {
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
+  
+  /* Ensure images in article/post content are block-level and in flow */
+  /* Exclude LogoScrollBar and other UI elements */
+  article img,
+  [class*="PostContent"] img,
+  [class*="post-content"] img,
+  .prose img {
+    display: block !important;
+    float: none !important;
+    clear: both !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  
+  /* Ensure positioned images keep their transform but stay in flow */
+  img.positioned-image,
+  img[data-positioned="true"] {
+    position: relative !important;
+    float: none !important;
+    clear: both !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
+  /* Ensure figure elements in articles don't float */
+  article figure,
+  [class*="PostContent"] figure,
+  [class*="post-content"] figure,
+  .prose figure {
+    display: block !important;
+    float: none !important;
+    clear: both !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 100% !important;
+  }
 }

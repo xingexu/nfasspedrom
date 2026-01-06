@@ -34,17 +34,17 @@ export default function PostDeleteButton({ postId }: PostDeleteButtonProps) {
 
   if (showConfirm) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="text-xs font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors rounded-lg px-2 py-1 disabled:opacity-50"
+          className="text-xs font-medium text-white bg-red-600 hover:bg-red-700 transition-colors rounded-md px-3 py-1.5 border border-red-600 disabled:opacity-50"
         >
           {isDeleting ? 'Deleting...' : 'Confirm'}
         </button>
         <button
           onClick={() => setShowConfirm(false)}
-          className="text-xs font-semibold text-text/50 hover:text-text transition-colors rounded-lg border border-neutral-200 px-2 py-1 hover:border-neutral-300"
+          className="text-xs font-medium text-text/70 hover:text-text transition-colors rounded-md px-3 py-1.5 border border-neutral-200 bg-white hover:border-neutral-300"
         >
           Cancel
         </button>
@@ -55,7 +55,7 @@ export default function PostDeleteButton({ postId }: PostDeleteButtonProps) {
   return (
     <button
       onClick={() => setShowConfirm(true)}
-      className="text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors rounded-lg border border-red-200 px-2 py-1 hover:border-red-300"
+      className="text-xs font-medium text-red-600 hover:text-red-700 transition-colors px-3 py-1.5 rounded-md border border-red-200 bg-white hover:border-red-300 hover:bg-red-50"
       title="Delete"
     >
       Delete

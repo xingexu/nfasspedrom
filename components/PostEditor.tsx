@@ -16,9 +16,10 @@ interface Post {
 
 interface PostEditorProps {
   post?: Post
+  isAdmin?: boolean
 }
 
-export default function PostEditor({ post }: PostEditorProps) {
+export default function PostEditor({ post, isAdmin = false }: PostEditorProps) {
   const router = useRouter()
   const [title, setTitle] = useState(post?.title || '')
   const [excerpt, setExcerpt] = useState(post?.excerpt || '')
@@ -41,6 +42,21 @@ export default function PostEditor({ post }: PostEditorProps) {
         : '/api/posts'
       const method = post ? 'PUT' : 'POST'
 
+      // Debug: Check if content has style attributes
+      if (typeof window !== 'undefined' && content.includes('<img')) {
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(content, 'text/html')
+        const images = doc.querySelectorAll('img')
+        images.forEach((img, idx) => {
+          const style = img.getAttribute('style') || ''
+          if (style.includes('transform:')) {
+            console.log(`Image ${idx} has transform:`, style)
+          } else {
+            console.warn(`Image ${idx} missing transform in saved HTML`)
+          }
+        })
+      }
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -52,7 +68,8 @@ export default function PostEditor({ post }: PostEditorProps) {
       })
 
       if (res.ok) {
-        router.push('/')
+        // If admin, go back to dashboard; otherwise go to home
+        router.push(isAdmin ? '/admin/dashboard' : '/')
         router.refresh()
       } else {
         const data = await res.json()
@@ -70,7 +87,7 @@ export default function PostEditor({ post }: PostEditorProps) {
       {/* Back link */}
       <button
         type="button"
-        onClick={() => router.push('/')}
+        onClick={() => router.push(isAdmin ? '/admin/dashboard' : '/')}
         className="inline-flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-8 text-sm font-medium"
       >
         <svg
@@ -86,7 +103,7 @@ export default function PostEditor({ post }: PostEditorProps) {
             d="M9 5l7 7-7 7"
           />
         </svg>
-        <span>Back to Journal</span>
+        <span>{isAdmin ? 'Back to Dashboard' : 'Back to Journal'}</span>
       </button>
 
       {/* Header */}
@@ -142,7 +159,7 @@ export default function PostEditor({ post }: PostEditorProps) {
         <div className="max-w-4xl mx-auto px-6 md:px-8 py-4 flex items-center justify-end gap-4">
           <button
             type="button"
-            onClick={() => router.push('/')}
+            onClick={() => router.push(isAdmin ? '/admin/dashboard' : '/')}
             className="px-6 py-2.5 text-text-muted hover:text-text transition-colors font-medium"
           >
             Cancel

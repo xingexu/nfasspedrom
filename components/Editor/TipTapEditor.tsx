@@ -92,6 +92,45 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
     content,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
+      // CRITICAL: Before getting HTML, ensure all image styles are synced to DOM
+      // ReactNodeViewRenderer serializes from actual DOM, so styles must be on elements
+      if (typeof window !== 'undefined') {
+        const editorElement = editor.view.dom as HTMLElement
+        const images = editorElement.querySelectorAll('img')
+        images.forEach((img) => {
+          const imgElement = img as HTMLImageElement
+          // Get the computed transform from React inline styles
+          const computedStyle = window.getComputedStyle(imgElement)
+          const transform = computedStyle.transform
+          const position = computedStyle.position
+          
+          // If there's a transform, ensure it's in the style attribute
+          if (transform && transform !== 'none' && position === 'relative') {
+            // Extract translate values - transform might be matrix() or translate()
+            // We need to preserve the actual transform value
+            let styleString = imgElement.getAttribute('style') || ''
+            
+            // Check if transform is already in style attribute
+            if (!styleString.includes('transform:')) {
+              // Get the actual transform value from computed style
+              // If it's a matrix, we need to extract translate values
+              // For now, use the computed transform directly
+              if (styleString) {
+                styleString = `${styleString}; transform: ${transform}; position: relative`
+              } else {
+                styleString = `transform: ${transform}; position: relative`
+              }
+              imgElement.setAttribute('style', styleString)
+            } else {
+              // Ensure position is relative
+              if (!styleString.includes('position:')) {
+                styleString = `${styleString}; position: relative`
+                imgElement.setAttribute('style', styleString)
+              }
+            }
+          }
+        })
+      }
       onChange(editor.getHTML())
     },
     editorProps: {

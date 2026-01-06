@@ -25,7 +25,7 @@ export default async function PreviewPage() {
       
       <div className="max-w-4xl mx-auto px-6 md:px-8 py-12 md:py-16">
         {/* Enhanced header */}
-        <div className="mb-12 text-center animate-fade-in">
+        <div className="mb-12 text-center animate-fade-in relative">
           <div className="inline-block mb-4">
             <h1 className="text-5xl md:text-6xl font-bold text-text mb-3 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
               Journal
@@ -33,14 +33,15 @@ export default async function PreviewPage() {
             <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"></div>
           </div>
           
-          {/* Login Button - Always show in preview */}
-          <div className="flex justify-center">
+          {/* Subtle Admin Login Icon - Top Right */}
+          <div className="absolute top-0 right-0">
             <Link
               href="/login"
-              className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105"
+              className="group inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white border border-neutral-200 hover:border-primary/50 text-text/60 hover:text-primary transition-all duration-200 shadow-sm hover:shadow-md"
+              title="Admin Login"
             >
               <svg
-                className="w-4 h-4 transform group-hover:rotate-12 transition-transform"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -52,7 +53,6 @@ export default async function PreviewPage() {
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
-              <span>Admin Login</span>
             </Link>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default async function PreviewPage() {
                   className="group animate-fade-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <div className="relative">
+                  <div className="relative bg-white rounded-xl p-8 md:p-10 border border-neutral-100 shadow-sm hover:shadow-md transition-all duration-300">
                     {/* Hover background effect */}
                     <div className="absolute -inset-4 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
                     
