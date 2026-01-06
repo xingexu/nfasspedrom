@@ -35,20 +35,13 @@ export default async function SinglePost({ params }: { params: Promise<{ id: str
     )
   }
 
-  // Handle date formatting safely
+  // Handle date formatting safely - prefer postDate over date
   let formattedDate = 'No date'
   try {
-    if (post.date) {
-      const postDate = new Date(post.date)
-      if (!isNaN(postDate.getTime())) {
-        formattedDate = postDate.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })
-      }
-    } else if (post.createdAt) {
-      const postDate = new Date(post.createdAt)
+    // Use postDate first (user-set date), then date, then createdAt as fallback
+    const dateToUse = post.postDate ?? post.date ?? post.createdAt
+    if (dateToUse) {
+      const postDate = new Date(dateToUse)
       if (!isNaN(postDate.getTime())) {
         formattedDate = postDate.toLocaleDateString('en-US', {
           year: 'numeric',

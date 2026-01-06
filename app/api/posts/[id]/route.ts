@@ -25,18 +25,22 @@ export async function PUT(
     const { id } = await context.params
     const { title, content, date } = await request.json()
 
+    // Ensure date is valid before updating
+    const dateValue = date ? new Date(date) : new Date()
+    
     const updatedPost = await prisma.post.update({
       where: { id },
       data: {
         title,
         content,
-        date: new Date(date)
+        date: dateValue,
+        postDate: dateValue, // Also update postDate field
       }
     })
 
     return NextResponse.json(updatedPost)
   } catch (err) {
-    console.error(err)
+    console.error('Error updating post:', err)
     return NextResponse.json({ error: "Failed to update post" }, { status: 500 })
   }
 }

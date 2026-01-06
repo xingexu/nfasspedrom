@@ -52,6 +52,7 @@ async function getRecentPosts() {
         published: true,
         updatedAt: true,
         date: true,
+        postDate: true, // Include postDate field
       },
     })
 
@@ -176,7 +177,7 @@ export default async function AdminDashboardPage() {
                           {post.status}
                         </span>
                         <span>
-                          {new Date(post.updatedAt ?? post.date).toLocaleDateString('en-US', {
+                          {new Date(post.postDate ?? post.date ?? post.updatedAt).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric'
