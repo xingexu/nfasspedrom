@@ -2,18 +2,12 @@ import prisma from "@/lib/prisma"
 import Link from "next/link"
 import LogoScrollBar from "@/components/LogoScrollBar"
 import { getSession } from "@/lib/auth"
-import { redirect } from "next/navigation"
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME?.trim() || 'bigguy'
 
 export default async function Home() {
   const session = await getSession()
   const isLoggedIn = !!session
-  
-  // Redirect logged-in admins to dashboard
-  if (isLoggedIn && session?.username === ADMIN_USERNAME) {
-    redirect('/admin/dashboard')
-  }
 
   type Post = Awaited<ReturnType<typeof prisma.post.findMany>>[number]
   let posts: Post[] = []
@@ -41,9 +35,9 @@ export default async function Home() {
             <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"></div>
           </div>
           
-          {/* Login Button - Only show if not logged in */}
-          {!isLoggedIn && (
-            <div className="flex justify-center">
+          {/* Login/Dashboard Button */}
+          <div className="flex justify-center">
+            {!isLoggedIn ? (
               <Link
                 href="/login"
                 className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105"
@@ -63,8 +57,28 @@ export default async function Home() {
                 </svg>
                 <span>Admin Login</span>
               </Link>
-            </div>
-          )}
+            ) : (
+              <Link
+                href="/admin/dashboard"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105"
+              >
+                <svg
+                  className="w-4 h-4 transform group-hover:rotate-12 transition-transform"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+                <span>Admin Dashboard</span>
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Posts List - Enhanced Design */}
@@ -194,4 +208,3 @@ export default async function Home() {
     </div>
   )
 }
-
