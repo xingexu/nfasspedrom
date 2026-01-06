@@ -1,13 +1,12 @@
 import prisma from "@/lib/prisma"
 import Link from "next/link"
 import LogoScrollBar from "@/components/LogoScrollBar"
-import { getSession } from "@/lib/auth"
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME?.trim() || 'bigguy'
 
 export default async function Home() {
-  const session = await getSession()
-  const isLoggedIn = !!session
+  // Always show login button on home page - don't check session status
+  const isLoggedIn = false
 
   type Post = Awaited<ReturnType<typeof prisma.post.findMany>>[number]
   let posts: Post[] = []
