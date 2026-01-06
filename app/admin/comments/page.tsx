@@ -3,13 +3,30 @@ import { redirect } from 'next/navigation'
 import prisma from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
 
+type CommentWithRelations = Awaited<ReturnType<typeof prisma.comment.findMany<{
+  include: {
+    post: {
+      select: {
+        id: true
+        title: true
+      }
+    }
+    author: {
+      select: {
+        id: true
+        username: true
+      }
+    }
+  }
+}>>>[number]
+
 export default async function AdminCommentsPage() {
   const session = await getSession()
   if (!session) {
     redirect('/admin/login')
   }
 
-  let comments = []
+  let comments: CommentWithRelations[] = []
   try {
     comments = await prisma.comment.findMany({
       orderBy: { createdAt: 'desc' },
@@ -72,7 +89,7 @@ export default async function AdminCommentsPage() {
                 No comments yet.
               </div>
             ) : (
-              comments.map((comment: any) => (
+              comments.map((comment) => (
                 <div key={comment.id} className="px-6 py-4 hover:bg-neutral-50 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">

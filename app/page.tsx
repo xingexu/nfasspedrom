@@ -15,7 +15,8 @@ export default async function Home() {
     redirect('/admin/dashboard')
   }
 
-  let posts = []
+  type Post = Awaited<ReturnType<typeof prisma.post.findMany>>[number]
+  let posts: Post[] = []
   try {
     posts = await prisma.post.findMany({
       orderBy: { date: "desc" }

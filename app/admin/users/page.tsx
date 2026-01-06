@@ -3,13 +3,30 @@ import { redirect } from 'next/navigation'
 import prisma from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
 
+type UserWithCounts = Awaited<ReturnType<typeof prisma.user.findMany<{
+  select: {
+    id: true
+    username: true
+    email: true
+    name: true
+    role: true
+    joinedAt: true
+    _count: {
+      select: {
+        posts: true
+        comments: true
+      }
+    }
+  }
+}>>>[number]
+
 export default async function AdminUsersPage() {
   const session = await getSession()
   if (!session) {
     redirect('/admin/login')
   }
 
-  let users = []
+  let users: UserWithCounts[] = []
   try {
     users = await prisma.user.findMany({
       orderBy: { joinedAt: 'desc' },
@@ -76,7 +93,7 @@ export default async function AdminUsersPage() {
                   No users yet.
                 </div>
               ) : (
-                users.map((user: any) => (
+                users.map((user) => (
                   <div key={user.id} className="grid grid-cols-5 gap-4 items-center px-6 py-4 hover:bg-neutral-50 transition-colors">
                     <span className="font-medium text-text">{user.username}</span>
                     <span className="text-sm text-text/70">{user.email || '—'}</span>

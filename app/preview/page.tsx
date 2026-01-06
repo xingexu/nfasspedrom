@@ -6,7 +6,8 @@ export default async function PreviewPage() {
   // This page always shows the public view, regardless of admin status
   // Used for the "View as User" preview in admin dashboard
 
-  let posts = []
+  type Post = Awaited<ReturnType<typeof prisma.post.findMany>>[number]
+  let posts: Post[] = []
   try {
     // Only show published posts in preview (public view)
     posts = await prisma.post.findMany({
@@ -101,7 +102,7 @@ export default async function PreviewPage() {
           </div>
         ) : (
           <div className="space-y-16">
-            {posts.map((post: any, index: number) => {
+            {posts.map((post, index: number) => {
               const postDate = new Date(post.date)
               const formattedDate = postDate.toLocaleDateString('en-US', {
                 year: 'numeric',

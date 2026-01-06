@@ -34,8 +34,13 @@ export default async function BlogPage({
     ]
   }
 
-  let posts = []
-  let allPosts = []
+  type Post = Awaited<ReturnType<typeof prisma.post.findMany>>[number]
+  type PostWithDate = Awaited<ReturnType<typeof prisma.post.findMany<{
+    select: { createdAt: true }
+  }>>>[number]
+  
+  let posts: Post[] = []
+  let allPosts: PostWithDate[] = []
   try {
     posts = await prisma.post.findMany({
       where,
