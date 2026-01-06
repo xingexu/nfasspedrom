@@ -90,7 +90,7 @@ export default async function SinglePost({ params }: { params: Promise<{ id: str
 
         {/* Post Content */}
         <article 
-          className="max-w-none"
+          className="max-w-none w-full overflow-hidden"
           style={{ fontFamily: 'var(--font-body)' }}
         >
           <PostContent content={post.content} maxLength={999999} />
