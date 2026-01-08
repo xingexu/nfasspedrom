@@ -13,7 +13,10 @@ export default async function Home() {
   try {
     posts = await prisma.post.findMany({
       where: { published: true },
-      orderBy: { postDate: "desc" } // Order by postDate (user-set date) instead of date
+      orderBy: [
+        { postDate: "desc" }, // First try postDate (user-set date)
+        { date: "desc" }      // Fallback to date if postDate is null
+      ]
     })
   } catch (error: any) {
     console.error('Error fetching posts:', error?.message || error)

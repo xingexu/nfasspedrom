@@ -261,13 +261,12 @@ export default function PostContent({ content, maxLength = 500 }: PostContentPro
       
       // Process images after a short delay to ensure DOM is ready
       const processSpoilerImages = () => {
-        const allImages = Array.from(contentRef.current?.querySelectorAll('img:not([data-spoiler-processed])') || [])
+        const allImages = Array.from(contentRef.current?.querySelectorAll('img:not([data-spoiler-processed])') || []) as HTMLImageElement[]
         
         // Check DOM attributes AND match by src
         const spoilerImages = allImages.filter((img) => {
-          const imgElement = img as HTMLImageElement
-          const spoilerAttr = imgElement.getAttribute('data-spoiler')
-          const src = imgElement.getAttribute('src') || imgElement.src || ''
+          const spoilerAttr = img.getAttribute('data-spoiler')
+          const src = img.getAttribute('src') || img.src || ''
           const srcFileName = src.split('/').pop() || src
           
           // Check multiple ways the attribute might be set
