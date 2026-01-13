@@ -100,12 +100,6 @@ export default async function AdminDashboardPage() {
               <ViewAsUserButton />
             </div>
             <Link
-              href="/admin/about"
-              className="text-sm font-medium text-text/70 hover:text-text transition-colors px-4 py-2 border border-neutral-200 rounded-md bg-white hover:border-neutral-300"
-            >
-              About
-            </Link>
-            <Link
               href="/admin/posts/new"
               className="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm border border-primary"
             >

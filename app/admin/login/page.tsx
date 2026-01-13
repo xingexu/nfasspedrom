@@ -208,9 +208,6 @@ export default function LoginPage() {
 
           <div className="mt-10 flex items-center justify-between text-sm text-text/60">
             <span>Protected area — unauthorized access prohibited.</span>
-            <Link href="/about" className="font-semibold text-primary hover:text-primary/80">
-              View public about page
-            </Link>
           </div>
         </div>
       </div>

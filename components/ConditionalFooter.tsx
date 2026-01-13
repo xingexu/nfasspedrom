@@ -9,39 +9,23 @@ export default function ConditionalFooter() {
   const [isVisible, setIsVisible] = useState(false)
   const [shouldRender, setShouldRender] = useState(pathname !== '/')
 
-  useEffect(() => {
-    // On home page, check if we should show footer (after loading completes)
-    if (pathname === '/') {
-      // Wait for page to be fully loaded and rendered
-      const handleLoad = () => {
-        // Small delay to ensure everything is rendered
-        setTimeout(() => {
-          setShouldRender(true)
-          // Small delay before fade in to avoid distraction
-          setTimeout(() => {
-            setIsVisible(true)
-          }, 100)
-        }, 100)
-      }
+  // Don't show footer on admin pages or home page (including after logout)
+  const isAdminPage = pathname?.startsWith('/admin') ?? false
+  const isHomePage = pathname === '/'
 
-      // Check if page is already loaded
-      if (document.readyState === 'complete') {
-        handleLoad()
-      } else {
-        // Wait for window load event (all resources loaded)
-        window.addEventListener('load', handleLoad, { once: true })
-        return () => {
-          window.removeEventListener('load', handleLoad)
-        }
-      }
-    } else {
-      // On other pages, show footer immediately
-      setShouldRender(true)
-      setIsVisible(true)
+  useEffect(() => {
+    // Don't render footer on admin pages or home page
+    if (isAdminPage || isHomePage) {
+      return
     }
-  }, [pathname])
+
+    // On other pages, show footer immediately
+    setShouldRender(true)
+    setIsVisible(true)
+  }, [pathname, isAdminPage, isHomePage])
   
-  if (!shouldRender) return null
+  // Don't show footer on admin pages or home page
+  if (isAdminPage || isHomePage || !shouldRender) return null
   
   // Show footer on all pages with fade-in
   return (

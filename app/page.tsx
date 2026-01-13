@@ -5,13 +5,19 @@ import LogoScrollBar from "@/components/LogoScrollBar"
 import HomeLoading from "@/components/HomeLoading"
 import ContentWrapper from "@/components/ContentWrapper"
 
+const INTRO_COOKIE = 'nfass_intro_seen_session'
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME?.trim() || 'bigguy'
+
+// Revalidate this page every 0 seconds (always fresh data)
+export const revalidate = 0
 
 export default async function Home() {
   // Always show login button on home page - don't check session status
   const isLoggedIn = false
-  // Always show intro for now - can be made cookie-gated later if needed
-  const showIntro = true
+  // Check if user has seen the intro before
+  const cookieStore = await cookies()
+  const introSeen = cookieStore.get(INTRO_COOKIE)?.value
+  const showIntro = !introSeen // Only show intro if cookie doesn't exist
 
   type Post = Awaited<ReturnType<typeof prisma.post.findMany>>[number]
   let posts: Post[] = []

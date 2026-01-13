@@ -12,8 +12,21 @@ export async function POST(req: Request) {
   try {
     const { title, content, date } = await req.json()
 
-    // Ensure date is valid, default to now if not provided
-    const dateValue = date ? new Date(date) : new Date()
+    // Parse date string to avoid timezone issues
+    // If date is provided as YYYY-MM-DD, create date at local midnight to preserve the date
+    let dateValue: Date
+    if (date) {
+      const dateStr = date.toString()
+      // If it's in YYYY-MM-DD format, parse it to avoid timezone conversion
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        const [year, month, day] = dateStr.split('-').map(Number)
+        dateValue = new Date(year, month - 1, day) // month is 0-indexed
+      } else {
+        dateValue = new Date(date)
+      }
+    } else {
+      dateValue = new Date()
+    }
 
     const newPost = await prisma.post.create({
       data: {

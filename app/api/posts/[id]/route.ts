@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 import prisma from "@/lib/prisma"
 
 export async function GET(
@@ -25,8 +26,21 @@ export async function PUT(
     const { id } = await context.params
     const { title, content, date } = await request.json()
 
-    // Ensure date is valid before updating
-    const dateValue = date ? new Date(date) : new Date()
+    // Parse date string to avoid timezone issues
+    // If date is provided as YYYY-MM-DD, create date at local midnight to preserve the date
+    let dateValue: Date
+    if (date) {
+      const dateStr = date.toString()
+      // If it's in YYYY-MM-DD format, parse it to avoid timezone conversion
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        const [year, month, day] = dateStr.split('-').map(Number)
+        dateValue = new Date(year, month - 1, day) // month is 0-indexed
+      } else {
+        dateValue = new Date(date)
+      }
+    } else {
+      dateValue = new Date()
+    }
     
     const updatedPost = await prisma.post.update({
       where: { id },
@@ -37,6 +51,9 @@ export async function PUT(
         postDate: dateValue, // Also update postDate field
       }
     })
+
+    // Revalidate the home page so updated dates show immediately
+    revalidatePath('/')
 
     return NextResponse.json(updatedPost)
   } catch (err) {

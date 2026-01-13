@@ -11,6 +11,9 @@ type HomeLoadingProps = {
   showIntro?: boolean
 }
 
+const INTRO_COOKIE = 'nfass_intro_seen_session'
+const LEGACY_COOKIE = 'nfass_intro_seen'
+
 export default function HomeLoading({ showIntro = true }: HomeLoadingProps) {
   const [isLoading, setIsLoading] = useState(showIntro)
   const [isFadingOut, setIsFadingOut] = useState(false)
@@ -18,13 +21,15 @@ export default function HomeLoading({ showIntro = true }: HomeLoadingProps) {
   useEffect(() => {
     if (!showIntro) return
 
+    // Remove legacy persistent cookie so new session-based intro can play again
+    document.cookie = `${LEGACY_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`
+
     // Hide body content and footer during loading
     document.body.style.overflow = 'hidden'
     document.body.classList.add('loading-active')
     
-    // Mark intro as seen for the rest of this browser session.
-    // (Session cookie: no Max-Age/Expires)
-    document.cookie = 'nfass_intro_seen=1; Path=/; SameSite=Lax'
+    // Mark intro as seen for this browser session only
+    document.cookie = `${INTRO_COOKIE}=1; Path=/; SameSite=Lax`
 
     // Sequence: blur-in (3s animation), stay visible (1s), fade out (300ms), then remove
     // Total: ~4.3 seconds
