@@ -90,4 +90,9 @@
     margin-right: auto !important;
     max-width: 100% !important;
   }
+
+  /* Ensure body background is white during loading */
+  body.loading-active {
+    background-color: white !important;
+  }
 }

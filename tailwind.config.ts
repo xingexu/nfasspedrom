@@ -24,7 +24,8 @@ const config: Config = {
         body: ['var(--font-body)', 'serif'],
       },
       animation: {
-        'fade-in': 'fadeIn 0.6s ease-out',
+        'fade-in': 'fadeIn 1.5s ease-out',
+        'blur-in-fast': 'blurInFast 3s ease-out',
         'underline-expand': 'underlineExpand 0.8s ease-out 0.3s forwards',
         'float': 'float 6s ease-in-out infinite',
         'float-delayed': 'floatDelayed 8s ease-in-out infinite',
@@ -40,6 +41,12 @@ const config: Config = {
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        blurInFast: {
+          '0%': { opacity: '0', filter: 'blur(40px)' },
+          '30%': { opacity: '0.2', filter: 'blur(20px)' },
+          '60%': { opacity: '0.6', filter: 'blur(8px)' },
+          '100%': { opacity: '1', filter: 'blur(0px)' },
         },
         underlineExpand: {
           '0%': { width: '0%' },

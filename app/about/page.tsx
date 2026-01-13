@@ -27,7 +27,7 @@ export default async function AboutPage() {
         <div className="mb-12 text-center animate-fade-in">
           <div className="inline-block mb-4">
             <h1 className="text-5xl md:text-6xl font-bold text-text mb-3 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-              About Pedrom
+              About Nfass
             </h1>
             <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"></div>
           </div>

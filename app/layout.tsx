@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Space_Grotesk, Inter } from 'next/font/google'
+import { Space_Grotesk, Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import ConditionalFooter from '@/components/ConditionalFooter'
 
@@ -17,6 +17,13 @@ const inter = Inter({
   weight: ['400', '500'],
 })
 
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-journal',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800', '900'],
+})
+
 export const metadata: Metadata = {
   title: 'n/fäss',
   description: 'Personal journal by Pedrom Basidj',
@@ -32,7 +39,7 @@ export default function RootLayout({
   readonly children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable}`}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable} ${playfairDisplay.variable}`}>
       <body className="font-body bg-[#FAFAF7] text-text antialiased">
         {children}
         <ConditionalFooter />

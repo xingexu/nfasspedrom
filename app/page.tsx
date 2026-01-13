@@ -1,12 +1,17 @@
 import prisma from "@/lib/prisma"
 import Link from "next/link"
+import { cookies } from "next/headers"
 import LogoScrollBar from "@/components/LogoScrollBar"
+import HomeLoading from "@/components/HomeLoading"
+import ContentWrapper from "@/components/ContentWrapper"
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME?.trim() || 'bigguy'
 
 export default async function Home() {
   // Always show login button on home page - don't check session status
   const isLoggedIn = false
+  // Always show intro for now - can be made cookie-gated later if needed
+  const showIntro = true
 
   type Post = Awaited<ReturnType<typeof prisma.post.findMany>>[number]
   let posts: Post[] = []
@@ -25,14 +30,17 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-50/50">
-      <LogoScrollBar />
-      
-      <div className="max-w-5xl mx-auto px-6 md:px-8 py-16 md:py-20">
+    <>
+      <HomeLoading showIntro={showIntro} />
+      <ContentWrapper showIntro={showIntro}>
+        <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-50/50">
+        <LogoScrollBar />
+
+        <div className="max-w-5xl mx-auto px-6 md:px-8 py-16 md:py-20">
         {/* Enhanced header */}
         <div className="mb-16 text-center animate-fade-in">
           <div className="inline-block mb-6">
-            <h1 className="text-6xl md:text-7xl font-bold text-text mb-4 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            <h1 className="text-6xl md:text-7xl font-bold text-text mb-4 tracking-tight" style={{ fontFamily: 'var(--font-journal)', fontWeight: 600, letterSpacing: '-0.02em' }}>
               Journal
             </h1>
             <div className="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto rounded-full"></div>
@@ -229,7 +237,9 @@ export default async function Home() {
             })}
           </div>
         )}
+        </div>
       </div>
-    </div>
+      </ContentWrapper>
+    </>
   )
 }
